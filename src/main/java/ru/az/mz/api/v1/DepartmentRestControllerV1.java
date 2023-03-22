@@ -55,11 +55,9 @@ public class DepartmentRestControllerV1 {
     ) throws MyException {
         return orgId > 0
                 ? departmentServiceV1.findAllByOrgId(orgId).stream()
-                    .filter(department -> EntityStatus.ACTIVE.equals(department.getStatus()))
                     .map(DepartmentDtoV2::createWithOrganization)
                     .collect(Collectors.toList())
                 : departmentServiceV1.findAll().stream()
-                    .filter(department -> EntityStatus.ACTIVE.equals(department.getStatus()))
                     .map(DepartmentDtoV2::createWithOrganization)
                     .collect(Collectors.toList());
     }

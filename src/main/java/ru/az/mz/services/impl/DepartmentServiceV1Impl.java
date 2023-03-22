@@ -21,7 +21,9 @@ import ru.az.mz.services.*;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -115,7 +117,11 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
     public List<Department> findAllByOrgId(Long id) throws MyException {
         List<Department> deps = new ArrayList<>();
         organizationRepo.findById(id).ifPresent(organization ->
-                deps.addAll(departmentRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE))
+                deps.addAll(
+                        departmentRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE).stream()
+                            .sorted(Comparator.comparing(Department::getName))
+                            .collect(Collectors.toList())
+                )
         );
         return deps;
     }

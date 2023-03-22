@@ -11,6 +11,9 @@ import ru.az.mz.dto.v1.PointOfPresenceDtoV1;
 import ru.az.mz.services.MyException;
 import ru.az.mz.services.PointOfPresenceServiceV1;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("api/v1/point-of-presences")
 public class PointOfPresenceRestControllerV1 {
@@ -42,6 +45,21 @@ public class PointOfPresenceRestControllerV1 {
     ) throws MyException {
         return PointOfPresenceDtoV1.createWithOrganization(pointOfPresenceServiceV1.findById(id));
     }
+
+    @GetMapping("all")
+    @PreAuthorize("hasAnyAuthority('user:read','user:write')")
+    public List<PointOfPresenceDtoV1> findAllByOrgId(
+            @RequestParam(required = false, defaultValue = "0") Long orgId
+    ) {
+        return orgId > 0
+                ? pointOfPresenceServiceV1.findAllByOrgId(orgId).stream()
+                    .map(PointOfPresenceDtoV1::createWithOrganization)
+                    .collect(Collectors.toList())
+                : pointOfPresenceServiceV1.findAll().stream()
+                    .map(PointOfPresenceDtoV1::createWithOrganization)
+                    .collect(Collectors.toList());
+    }
+
 
     @PostMapping
     @PreAuthorize("hasAuthority('user:write')")

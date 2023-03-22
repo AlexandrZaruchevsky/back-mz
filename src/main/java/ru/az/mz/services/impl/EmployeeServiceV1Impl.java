@@ -88,19 +88,19 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
         employee.setKspd(employeeDtoV1.getKspd());
         employee.setSaveByUser(securityService.getUsername());
         employee.setDepartment(
-                employeeDtoV1.getDepId() == null
-                        ? null
-                        : departmentServiceV1.findById(employeeDtoV1.getId())
+                employeeDtoV1.getDepId() != null && employeeDtoV1.getDepId() > 0
+                        ? departmentServiceV1.findById(employeeDtoV1.getDepId())
+                        : null
         );
         employee.setPosition(
-                employeeDtoV1.getPosId() == null
-                        ? null
-                        : positionServiceV1.findById(employeeDtoV1.getPosId())
+                employeeDtoV1.getPosId() != null && employeeDtoV1.getPosId() > 0
+                        ? positionServiceV1.findById(employeeDtoV1.getPosId())
+                        : null
         );
         employee.setPointOfPresence(
-                employeeDtoV1.getPosId() == null
-                        ? null
-                        : pointOfPresenceServiceV1.findById(employeeDtoV1.getPosId())
+                employeeDtoV1.getPofId() != null && employeeDtoV1.getPofId() > 0
+                        ? pointOfPresenceServiceV1.findById(employeeDtoV1.getPofId())
+                        : null
         );
     }
 

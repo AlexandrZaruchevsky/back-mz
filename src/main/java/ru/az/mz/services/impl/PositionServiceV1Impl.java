@@ -13,7 +13,9 @@ import ru.az.mz.services.*;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PositionServiceV1Impl implements PositionServiceV1 {
@@ -44,7 +46,11 @@ public class PositionServiceV1Impl implements PositionServiceV1 {
     public List<Position> findAllByOrgId(Long id) {
         List<Position> positions = new ArrayList<>();
         organizationRepo.findById(id).ifPresent(organization -> {
-            positions.addAll(positionRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE));
+            positions.addAll(
+                    positionRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE).stream()
+                    .sorted(Comparator.comparing(Position::getName))
+                    .collect(Collectors.toList())
+            );
         });
         return positions;
     }
