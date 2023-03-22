@@ -1,0 +1,60 @@
+POST http://localhost:8099/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "12345678"
+}
+
+###
+
+GET http://localhost:8099/api/v1/employees
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+###
+
+POST http://localhost:8099/api/v1/employees
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+{
+  "lastName": "Zaruchevsky",
+  "firstName": "Alexandr1",
+  "middleName": "A",
+  "email": "a@a.r",
+  "phone": "32",
+  "kspd": "123",
+  "department": {
+    "id": 1
+  },
+  "position": {
+    "id": 2
+  },
+  "pointOfPresence": {
+  "id": 1
+  }
+}
+
+###
+
+PUT http://localhost:8099/api/v1/employees
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+{
+  "id": 1,
+  "name": "Управление информационных технологий1",
+  "topLevel": 1,
+  "organization": {
+    "id": 1
+  }
+}
+
+###
+
+DELETE http://localhost:8099/api/v1/employees/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+###

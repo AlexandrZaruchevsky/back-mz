@@ -1,0 +1,57 @@
+POST http://localhost:8099/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "12345678"
+}
+
+###
+
+GET http://localhost:8099/api/v1/point-of-presences
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+###
+
+GET http://localhost:8099/api/v1/point-of-presences/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+###
+
+POST http://localhost:8099/api/v1/point-of-presences
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+{
+  "shortName": "КС в Каргопольском муниципальном округе Архангельской области"
+}
+
+###
+
+PUT http://localhost:8099/api/v1/point-of-presences
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+{
+  "id": 1,
+  "shortName": "КС в Каргопольском муниципальном округе Архангельской области",
+  "fullName": "Клиентская служба (на правах отдела) в Каргопольском муниципальном округе Архангельской области",
+  "postcode": "164110",
+  "region": "Архангельская область",
+  "district": "Каргопольский район",
+  "city": "Каргополь",
+  "street": "Ленина ул",
+  "house": 63,
+  "organization": {
+    "id": 1
+  }
+}
+###
+
+DELETE http://localhost:8099/api/v1/point-of-presences/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+###

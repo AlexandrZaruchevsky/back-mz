@@ -1,0 +1,52 @@
+server:
+  port: 8099
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:mz_v1}
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:12345678}
+  flyway:
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+security:
+  ldap:
+    domain: ${DOMAIN_NAME:domain}
+    username: ${DOMAIN_USERNAME:username}
+    password: ${DOMAIN_USER_PASSWORD:password}
+  secret: ${SECRET_KEY:1 kure sluga userdnyi boga}
+  authorization:
+    header: Authorization
+    expiration: 86400
+  user:
+    username: ${DEFAULT_USERNAME:admin}
+    password: ${DEFAULT_PASSWORD:12345678}
+    role: ${DEFAULT_ROLE:SUPER_ADMIN}
+    email: ${DEFAULT_EMAIL:admin@mail.com}
+  front:
+    host: http://${FRONT_HOST:*}:${FRONT_PORT:*}
+
+setup:
+  page:
+    current: 0
+    size: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,flyway,env"
+      base-path: /monitor
+springdoc:
+  swagger-ui:
+    path: /api-docs/swagger-ui-custom.html
+  api-docs:
+    path: /api-docs

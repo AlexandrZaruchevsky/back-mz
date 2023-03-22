@@ -1,0 +1,53 @@
+POST http://localhost:8099/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "12345678"
+}
+
+###
+
+GET http://localhost:8099/api/v1/positions
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2NjE3NDI1LCJleHAiOjE2NzY3MDM4MjV9.KriAOgR3KfbDp1yYrt6kxV_2rQb5tz0uwiHAfmZ4tQs
+
+###
+
+GET http://localhost:8099/api/v1/positions/2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2NjE3NDI1LCJleHAiOjE2NzY3MDM4MjV9.KriAOgR3KfbDp1yYrt6kxV_2rQb5tz0uwiHAfmZ4tQs
+
+###
+
+POST http://localhost:8099/api/v1/positions
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2NjE3NDI1LCJleHAiOjE2NzY3MDM4MjV9.KriAOgR3KfbDp1yYrt6kxV_2rQb5tz0uwiHAfmZ4tQs
+
+{
+  "name": "Главный специалист-эксперт",
+  "organization": {
+    "id": 1
+  }
+}
+
+###
+
+PUT http://localhost:8099/api/v1/positions
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2NjE3NDI1LCJleHAiOjE2NzY3MDM4MjV9.KriAOgR3KfbDp1yYrt6kxV_2rQb5tz0uwiHAfmZ4tQs
+
+{
+  "id": 2,
+  "name": "Главный специалист-эксперт",
+  "organization": {
+    "id": 1
+  }
+}
+###
+
+DELETE http://localhost:8099/api/v1/positions/2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2NjE3NDI1LCJleHAiOjE2NzY3MDM4MjV9.KriAOgR3KfbDp1yYrt6kxV_2rQb5tz0uwiHAfmZ4tQs
+
+###

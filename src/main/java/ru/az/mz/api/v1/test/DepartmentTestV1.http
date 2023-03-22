@@ -1,0 +1,49 @@
+POST http://localhost:8099/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "12345678"
+}
+
+###
+
+GET http://localhost:8099/api/v1/departments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+###
+
+POST http://localhost:8099/api/v1/departments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+{
+  "name": "Управление информационных технологий",
+  "topLevel": 1,
+  "organization": {
+    "id": 1
+  }
+}
+
+###
+
+PUT http://localhost:8099/api/v1/departments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+{
+  "id": 1,
+  "name": "Управление информационных технологий1",
+  "topLevel": 1,
+  "organization": {
+    "id": 1
+  }
+}
+###
+
+DELETE http://localhost:8099/api/v1/departments/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODkxMTI4LCJleHAiOjE2NzY5Nzc1Mjh9.ev-4TtNCxmAeqbxEPAhkQR5qvxhrYfJmCkTBIqBanLE
+
+

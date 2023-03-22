@@ -1,0 +1,85 @@
+POST http://localhost:8099/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "12345678"
+}
+
+###
+
+GET http://localhost:8099/api/v1/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2Mzc3NjMyLCJleHAiOjE2NzY0NjQwMzJ9.2k-DkjhSRwfAjzNSSntyjbzItpovIjdeLhZ-BSTvvpQ
+
+###
+
+POST http://localhost:8099/api/v1/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2Mzc3NjMyLCJleHAiOjE2NzY0NjQwMzJ9.2k-DkjhSRwfAjzNSSntyjbzItpovIjdeLhZ-BSTvvpQ
+
+{
+  "username": "admin1",
+  "password": "admin1",
+  "email": "a@q.ru",
+  "roles": [
+    {
+      "id": 1,
+      "name": "SUPERADMIN"
+    },
+    {
+      "id": 2,
+      "name": "ADMIN"
+    }
+  ]
+}
+
+###
+
+PUT http://localhost:8099/api/v1/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2Mzc3NjMyLCJleHAiOjE2NzY0NjQwMzJ9.2k-DkjhSRwfAjzNSSntyjbzItpovIjdeLhZ-BSTvvpQ
+
+{
+  "id": 9,
+  "username": "admin1",
+  "password": "admin1",
+  "email": "a@q.ru",
+  "firstName": "Alexandr",
+  "lastName": "Zaruchevsky",
+  "roles": [
+    {
+      "id": 1,
+      "name": "SUPERADMIN"
+    },
+    {
+      "id": 2,
+      "name": "ADMIN"
+    }
+  ]
+}
+
+###
+
+POST http://localhost:8099/api/v1/users/change-password
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2Mzc3NjMyLCJleHAiOjE2NzY0NjQwMzJ9.2k-DkjhSRwfAjzNSSntyjbzItpovIjdeLhZ-BSTvvpQ
+
+{
+  "username": "admin",
+  "password": "12345678"
+}
+
+###
+
+GET http://localhost:8099/api/v1/users/9/change-status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2Mzc3NjMyLCJleHAiOjE2NzY0NjQwMzJ9.2k-DkjhSRwfAjzNSSntyjbzItpovIjdeLhZ-BSTvvpQ
+
+###
+
+DELETE http://localhost:8099/api/v1/users/9
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2Mzc3NjMyLCJleHAiOjE2NzY0NjQwMzJ9.2k-DkjhSRwfAjzNSSntyjbzItpovIjdeLhZ-BSTvvpQ
+
+###

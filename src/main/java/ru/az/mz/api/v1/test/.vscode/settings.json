@@ -1,0 +1,8 @@
+{
+    "rest-client.environmentVariables": {
+        "sanbox":{
+            "baseUrl": "http://localhost:8099/api/v1",
+            "token": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOlsiU1VQRVJfQURNSU4iXSwiaWF0IjoxNjc2ODk0MDc1LCJleHAiOjE2NzY5ODA0NzV9.8GfO4STY1q9vg5xbcpB-ujjczEhCHwFPZhOE_pVi4z4"
+        }
+    }
+}
