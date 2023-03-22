@@ -2,6 +2,7 @@ package ru.az.mz.api.v1;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +35,8 @@ public class PositionRestControllerV1 {
             PageRequestDtoV1 pageRequestDtoV1
     ) {
         PageRequest pageRequest = pageRequestDtoV1 == null
-                ? setupParameters.getPageRequestDefault()
-                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize());
+                ? setupParameters.getPageRequestDefault().withSort(Sort.by("name"))
+                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize()).withSort(Sort.by("name"));
         return positionServiceV1.findAll(pageRequest).map(PositionDtoV1::create);
     }
 

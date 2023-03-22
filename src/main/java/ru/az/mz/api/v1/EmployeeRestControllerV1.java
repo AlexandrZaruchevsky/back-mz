@@ -29,10 +29,30 @@ public class EmployeeRestControllerV1 {
     public Page<EmployeeDtoV1> findAll(
             PageRequestDtoV1 pageRequestDtoV1
     ) {
-        PageRequest pageRequest = pageRequestDtoV1 == null
-                ? setupParameters.getPageRequestDefault().withSort(Sort.by("lastName", "firstName", "middleName"))
-                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize()).withSort(Sort.by("lastName", "firstName", "middleName"));
-        return employeeServiceV1.findAll(pageRequest).map(EmployeeDtoV1::createWithPositionAndDepartment);
+        Sort sortBy = Sort.by("lastName", "firstName", "middleName");
+        PageRequest pageRequest = setupParameters.getPageRequestDefault().withSort(sortBy);
+        if (pageRequestDtoV1 != null) {
+            pageRequest = PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize());
+            if ("".equalsIgnoreCase(pageRequestDtoV1.getSortBy().trim())) {
+                return employeeServiceV1.findAll(pageRequest.withSort(sortBy))
+                        .map(EmployeeDtoV1::createWithPositionAndDepartment);
+            }else{
+                if("fio".equalsIgnoreCase(pageRequestDtoV1.getSortBy().trim())){
+                    return employeeServiceV1.findByFIO(pageRequestDtoV1.getSearch(),pageRequest.withSort(sortBy))
+                            .map(EmployeeDtoV1::createWithPositionAndDepartment);
+                }else{
+                    sortBy = Sort.by("kspd");
+                    return employeeServiceV1.findByKspd(pageRequestDtoV1.getSearch(),pageRequest.withSort(sortBy))
+                            .map(EmployeeDtoV1::createWithPositionAndDepartment);
+                }
+            }
+        } else {
+            return employeeServiceV1.findAll(pageRequest)
+                    .map(EmployeeDtoV1::createWithPositionAndDepartment);
+        }
+//        PageRequest pageRequest = pageRequestDtoV1 == null
+//                ? setupParameters.getPageRequestDefault().withSort(Sort.by("lastName", "firstName", "middleName"))
+//                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize()).withSort(Sort.by("lastName", "firstName", "middleName"));
     }
 
     @GetMapping("{id}")
