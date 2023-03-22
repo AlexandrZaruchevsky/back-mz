@@ -11,8 +11,7 @@ import java.util.Optional;
 
 public interface EmployeeRepo extends PagingAndSortingRepository<Employee, Long> {
 
-//    @EntityGraph("Employee.withAll")
-    @EntityGraph("Employee.withAll")
+    @EntityGraph("Employee.withDepartmentAndPosition")
     Page<Employee> findAllByStatus(EntityStatus status, Pageable pageable);
 
     @EntityGraph("Employee.withAll")

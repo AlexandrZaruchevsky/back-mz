@@ -18,6 +18,13 @@ import java.util.List;
                 }
         ),
         @NamedEntityGraph(
+                name = "Employee.withDepartmentAndPosition",
+                attributeNodes = {
+                        @NamedAttributeNode("department"),
+                        @NamedAttributeNode("position")
+                }
+        ),
+        @NamedEntityGraph(
                 name = "Employee.withPosition",
                 attributeNodes = {
                         @NamedAttributeNode("position")
