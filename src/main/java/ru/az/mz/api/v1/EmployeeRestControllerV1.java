@@ -50,9 +50,6 @@ public class EmployeeRestControllerV1 {
             return employeeServiceV1.findAll(pageRequest)
                     .map(EmployeeDtoV1::createWithPositionAndDepartment);
         }
-//        PageRequest pageRequest = pageRequestDtoV1 == null
-//                ? setupParameters.getPageRequestDefault().withSort(Sort.by("lastName", "firstName", "middleName"))
-//                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize()).withSort(Sort.by("lastName", "firstName", "middleName"));
     }
 
     @GetMapping("{id}")

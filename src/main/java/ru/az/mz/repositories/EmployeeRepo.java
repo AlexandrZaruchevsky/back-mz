@@ -17,7 +17,7 @@ public interface EmployeeRepo extends PagingAndSortingRepository<Employee, Long>
     @EntityGraph("Employee.withAll")
     Optional<Employee> findByIdAndStatus(Long id, EntityStatus status);
 
-    @EntityGraph("Employee.withAll")
+    @EntityGraph("Employee.withDepartmentAndPosition")
     Page<Employee> findAllByLastNameStartingWithAndFirstNameStartingWithAndMiddleNameStartingWithAndStatus(
             String lastName,
             String firstName,
@@ -26,7 +26,7 @@ public interface EmployeeRepo extends PagingAndSortingRepository<Employee, Long>
             Pageable pageable
     );
 
-    @EntityGraph("Employee.withAll")
+    @EntityGraph("Employee.withDepartmentAndPosition")
     Page<Employee> findAllByKspdStartingWithAndStatus(
             String kspd,
             EntityStatus status,

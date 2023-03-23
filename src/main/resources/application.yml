@@ -13,7 +13,7 @@ spring:
     password: ${spring.datasource.password}
   jpa:
     open-in-view: false
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: validate
 
