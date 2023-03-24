@@ -56,6 +56,15 @@ public class Employee extends BaseEntity {
     @Column(name = "kspd")
     private String kspd;
 
+    @Column(name = "account_name")
+    private String accountName;
+    @Column(name = "principal_name")
+    private String principalName;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "info")
+    private String info;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;

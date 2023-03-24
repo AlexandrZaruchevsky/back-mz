@@ -71,7 +71,7 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
                             pageRequestDtoV1.getSearch().trim(),
                             organization,
                             EntityStatus.ACTIVE,
-                            pageRequest
+                            pageRequest.withSort(Sort.by("name"))
                     );
                 } else {
                     List<Organization> orgs = organizationServiceV1.findAll();
@@ -82,7 +82,7 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
                                 pageRequestDtoV1.getSearch().trim(),
                                 orgs.get(0),
                                 EntityStatus.ACTIVE,
-                                pageRequest
+                                pageRequest.withSort(Sort.by("name"))
                         );
                     }
                 }
@@ -93,7 +93,7 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
                     departments = departmentRepo.findAllByOrganizationAndStatus(
                             organization,
                             EntityStatus.ACTIVE,
-                            pageRequest
+                            pageRequest.withSort(Sort.by("name"))
                     );
                 } else {
                     List<Organization> orgs = organizationServiceV1.findAll();
@@ -103,7 +103,7 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
                         departments = departmentRepo.findAllByOrganizationAndStatus(
                                 orgs.get(0),
                                 EntityStatus.ACTIVE,
-                                pageRequest
+                                pageRequest.withSort(Sort.by("name"))
                         );
                     }
                 }

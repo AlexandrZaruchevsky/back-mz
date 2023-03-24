@@ -40,6 +40,8 @@ public interface DepartmentRepo extends PagingAndSortingRepository<Department, L
             Pageable pageable
     );
 
+    List<Department> findAllByTopLevelAndStatus(boolean isTopDep, EntityStatus status);
+
     @EntityGraph("Department.withOrganizationAndEmployees")
     Optional<Department> findByIdAndStatus(Long id, EntityStatus status);
 

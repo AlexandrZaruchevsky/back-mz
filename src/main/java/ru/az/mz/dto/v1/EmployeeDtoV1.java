@@ -13,44 +13,16 @@ public class EmployeeDtoV1 {
     String email;
     String phone;
     String kspd;
+    String accountName;
+    String principalName;
+    String description;
+    String wsName;
     Long depId;
     String depName;
     Long posId;
     String posName;
     Long pofId;
     String pofName;
-
-    private static EmployeeDtoV1 getEmployeeDtoV1Default(
-            Employee employee
-    ) {
-        return new EmployeeDtoV1(
-                employee.getId(),
-                employee.getLastName(),
-                employee.getFirstName(),
-                employee.getMiddleName(),
-                employee.getEmail(),
-                employee.getPhone(),
-                employee.getKspd(),
-                employee.getDepartment() != null
-                        ? employee.getDepartment().getId()
-                        : -1,
-                employee.getDepartment() != null
-                        ? employee.getDepartment().getName()
-                        : "",
-                employee.getPosition() != null
-                        ? employee.getPosition().getId()
-                        : -1,
-                employee.getPosition() != null
-                        ? employee.getPosition().getName()
-                        : "",
-                employee.getPointOfPresence() != null
-                        ? employee.getPointOfPresence().getId()
-                        : -1,
-                employee.getPointOfPresence() != null
-                        ? employee.getPointOfPresence().getShortName()
-                        : ""
-        );
-    }
 
     private static EmployeeDtoV1 getEmployeeDtoV1Default(
             Employee employee,
@@ -67,6 +39,10 @@ public class EmployeeDtoV1 {
                         employee.getEmail(),
                         employee.getPhone(),
                         employee.getKspd(),
+                        employee.getAccountName(),
+                        employee.getPrincipalName(),
+                        employee.getDescription(),
+                        employee.getInfo(),
                         null,
                         null,
                         null,
@@ -84,6 +60,10 @@ public class EmployeeDtoV1 {
                         employee.getEmail(),
                         employee.getPhone(),
                         employee.getKspd(),
+                        employee.getAccountName(),
+                        employee.getPrincipalName(),
+                        employee.getDescription(),
+                        employee.getInfo(),
                         employee.getDepartment() != null
                                 ? employee.getDepartment().getId()
                                 : -1,
@@ -105,6 +85,10 @@ public class EmployeeDtoV1 {
                         employee.getEmail(),
                         employee.getPhone(),
                         employee.getKspd(),
+                        employee.getAccountName(),
+                        employee.getPrincipalName(),
+                        employee.getDescription(),
+                        employee.getInfo(),
                         employee.getDepartment() != null
                                 ? employee.getDepartment().getId()
                                 : -1,
@@ -130,6 +114,10 @@ public class EmployeeDtoV1 {
                         employee.getEmail(),
                         employee.getPhone(),
                         employee.getKspd(),
+                        employee.getAccountName(),
+                        employee.getPrincipalName(),
+                        employee.getDescription(),
+                        employee.getInfo(),
                         employee.getDepartment() != null
                                 ? employee.getDepartment().getId()
                                 : -1,

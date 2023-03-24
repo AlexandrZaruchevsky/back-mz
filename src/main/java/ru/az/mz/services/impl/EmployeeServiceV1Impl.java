@@ -86,6 +86,10 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
         employee.setEmail(employeeDtoV1.getEmail());
         employee.setPhone(employeeDtoV1.getPhone());
         employee.setKspd(employeeDtoV1.getKspd());
+        employee.setAccountName(employeeDtoV1.getAccountName());
+        employee.setPrincipalName(employeeDtoV1.getPrincipalName());
+        employee.setDescription(employeeDtoV1.getDescription());
+        employee.setInfo(employeeDtoV1.getWsName());
         employee.setSaveByUser(securityService.getUsername());
         employee.setDepartment(
                 employeeDtoV1.getDepId() != null && employeeDtoV1.getDepId() > 0
