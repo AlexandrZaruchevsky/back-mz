@@ -1,5 +1,6 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,7 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     }
 
     @Override
+    @Cacheable(value = {"userSecurity"}, key = "#username")
     public User findByUsername(String username) throws MyException {
         return userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
