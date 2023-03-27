@@ -7,8 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.az.mz.dto.v1.OrganizationDtoV1;
-import ru.az.mz.model.EntityStatus;
-import ru.az.mz.model.Organization;
+import ru.az.mz.model.*;
 import ru.az.mz.repositories.*;
 import ru.az.mz.services.MyException;
 import ru.az.mz.services.NotFoundException;
@@ -16,7 +15,9 @@ import ru.az.mz.services.OrganizationServiceV1;
 import ru.az.mz.services.SecurityService;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
@@ -67,9 +68,12 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
                 .orElseThrow(() -> new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
         return OrganizationDtoV1.createWithAll(
                 organization,
-                pointOfPresenceRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE),
-                departmentRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE),
-                positionRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE),
+                pointOfPresenceRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE).stream()
+                        .sorted(Comparator.comparing(PointOfPresence::getShortName)).collect(Collectors.toList()),
+                departmentRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE).stream()
+                        .sorted(Comparator.comparing(Department::getName)).collect(Collectors.toList()),
+                positionRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE).stream()
+                        .sorted(Comparator.comparing(Position::getName)).collect(Collectors.toList()),
                 employeeRepo.findByIdAndStatus(organization.getBossId(), EntityStatus.ACTIVE)
                         .orElse(null)
         );
@@ -101,9 +105,9 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"organizationWithDependencies"}, allEntries = true)
-    public boolean delete(long id) throws MyException {
-        Organization organization = findById(id);
+    @CacheEvict(cacheNames = {"organizationWithDependencies"}, key = "#orgId")
+    public boolean delete(long orgId) throws MyException {
+        Organization organization = findById(orgId);
         organization.setStatus(EntityStatus.DELETED);
         organization.setSaveByUser(securityService.getUsername());
         organizationRepo.save(organization);
