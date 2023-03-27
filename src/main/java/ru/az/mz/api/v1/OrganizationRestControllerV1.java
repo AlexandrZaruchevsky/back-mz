@@ -42,7 +42,7 @@ public class OrganizationRestControllerV1 {
     public OrganizationDtoV1 findById(
             @PathVariable Long id
     ) throws MyException {
-        return OrganizationDtoV1.create(organizationService.findById(id));
+        return OrganizationDtoV1.createWithAll(organizationService.findByIdWithAllDependencies(id));
     }
 
     @GetMapping("all")
