@@ -1,5 +1,7 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +38,7 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     }
 
     @Override
-    @Cacheable(value = {"userSecurity"}, key = "#username")
+    @Cacheable(cacheNames = {"userSecurity"}, key = "#username")
     public User findByUsername(String username) throws MyException {
         return userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -53,6 +55,7 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"userSecurity"}, key = "#username")
     public void changePassword(String username, String password) throws MyException {
         User userFromDb = findByUsername(username);
         userFromDb.setPassword(passwordEncoder.encode(password));
@@ -60,6 +63,7 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"userSecurity"}, allEntries = true)
     public void changeStatus(Long id) throws MyException {
         User userFromDb = findById(id);
         if(EntityStatus.ACTIVE.equals(userFromDb.getStatus())){
@@ -71,6 +75,7 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"userSecurity"}, allEntries = true)
     public User add(UserAuthDtoV1 userAuthDtoV1) {
         User user = new User();
         fillUser(userAuthDtoV1, user);
@@ -92,6 +97,7 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     }
 
     @Override
+    @CachePut(cacheNames = {"userSecurity"}, key = "#userAuthDtoV1.username")
     public User update(UserAuthDtoV1 userAuthDtoV1) throws MyException {
         User userFromDb = findById(userAuthDtoV1.getId());
         fillUser(userAuthDtoV1, userFromDb);
@@ -100,6 +106,7 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"userSecurity"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         User userFromDb = findById(id);
         userFromDb.setStatus(EntityStatus.DELETED);

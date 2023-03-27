@@ -1,5 +1,7 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -43,9 +45,10 @@ public class PositionServiceV1Impl implements PositionServiceV1 {
 
     @Override
     @Transactional
-    public List<Position> findAllByOrgId(Long id) {
+    @Cacheable(cacheNames = {"positionsByOrg"}, key = "#orgId")
+    public List<Position> findAllByOrgId(Long orgId) {
         List<Position> positions = new ArrayList<>();
-        organizationRepo.findById(id).ifPresent(organization -> {
+        organizationRepo.findById(orgId).ifPresent(organization -> {
             positions.addAll(
                     positionRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE).stream()
                     .sorted(Comparator.comparing(Position::getName))
@@ -57,6 +60,7 @@ public class PositionServiceV1Impl implements PositionServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"positionsByOrg", "organizationWithDependencies"}, allEntries = true)
     public Position add(PositionDtoV1 positionDtoV1) throws MyException {
         Position position = new Position();
         fillPosition(positionDtoV1, position);
@@ -75,6 +79,7 @@ public class PositionServiceV1Impl implements PositionServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"positionsByOrg", "organizationWithDependencies"}, allEntries = true)
     public Position update(PositionDtoV1 positionDtoV1) throws MyException {
         Position position = findById(positionDtoV1.getId());
         fillPosition(positionDtoV1, position);
@@ -82,6 +87,7 @@ public class PositionServiceV1Impl implements PositionServiceV1 {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"positionsByOrg", "organizationWithDependencies"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         Position position = findById(id);
         position.setStatus(EntityStatus.DELETED);

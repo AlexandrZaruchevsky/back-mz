@@ -1,5 +1,6 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -78,6 +79,7 @@ public class PointOfPresenceServiceV1Impl implements PointOfPresenceServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"organizationWithDependencies"}, allEntries = true)
     public PointOfPresence add(PointOfPresenceDtoV1 pointOfPresenceDtoV1) throws MyException {
         PointOfPresence pointOfPresence = new PointOfPresence();
         fillPointOfPresence(pointOfPresenceDtoV1, pointOfPresence);
@@ -86,6 +88,7 @@ public class PointOfPresenceServiceV1Impl implements PointOfPresenceServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"organizationWithDependencies"}, allEntries = true)
     public PointOfPresence update(PointOfPresenceDtoV1 pointOfPresenceDtoV1) throws MyException {
         PointOfPresence pointOfPresence = findById(pointOfPresenceDtoV1.getId());
         fillPointOfPresence(pointOfPresenceDtoV1, pointOfPresence);
@@ -93,6 +96,7 @@ public class PointOfPresenceServiceV1Impl implements PointOfPresenceServiceV1 {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"organizationWithDependencies"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         PointOfPresence pointOfPresence = findById(id);
         pointOfPresence.setStatus(EntityStatus.DELETED);

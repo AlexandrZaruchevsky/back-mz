@@ -1,5 +1,7 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -114,9 +116,10 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
 
     @Override
     @Transactional
-    public List<Department> findAllByOrgId(Long id) throws MyException {
+    @Cacheable(cacheNames = {"departmentsByOrg"}, key = "#orgId")
+    public List<Department> findAllByOrgId(Long orgId) throws MyException {
         List<Department> deps = new ArrayList<>();
-        organizationRepo.findById(id).ifPresent(organization ->
+        organizationRepo.findById(orgId).ifPresent(organization ->
                 deps.addAll(
                         departmentRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE).stream()
                             .sorted(Comparator.comparing(Department::getName))
@@ -149,6 +152,7 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"departmentsByOrg", "organizationWithDependencies"}, allEntries = true)
     public Department add(DepartmentDtoV2 departmentDto) throws MyException {
         Department department = new Department();
         fillDepartment(departmentDto, department);
@@ -157,6 +161,7 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"departmentsByOrg", "organizationWithDependencies"}, allEntries = true)
     public Department update(DepartmentDtoV2 departmentDto) throws MyException {
         Department department = findById(departmentDto.getId());
         fillDepartment(departmentDto, department);
@@ -164,6 +169,7 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"departmentsByOrg", "organizationWithDependencies"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         Department department = findById(id);
         department.setStatus(EntityStatus.DELETED);

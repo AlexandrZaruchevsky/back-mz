@@ -1,5 +1,7 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -7,23 +9,38 @@ import org.springframework.stereotype.Service;
 import ru.az.mz.dto.v1.OrganizationDtoV1;
 import ru.az.mz.model.EntityStatus;
 import ru.az.mz.model.Organization;
+import ru.az.mz.repositories.DepartmentRepo;
 import ru.az.mz.repositories.OrganizationRepo;
+import ru.az.mz.repositories.PointOfPresenceRepo;
+import ru.az.mz.repositories.PositionRepo;
 import ru.az.mz.services.MyException;
 import ru.az.mz.services.NotFoundException;
 import ru.az.mz.services.OrganizationServiceV1;
 import ru.az.mz.services.SecurityService;
 
-import java.util.ArrayList;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
 
     private final OrganizationRepo organizationRepo;
+    private final PointOfPresenceRepo pointOfPresenceRepo;
+    private final DepartmentRepo departmentRepo;
+    private final PositionRepo positionRepo;
     private final SecurityService securityService;
 
-    public OrganizationServiceV1Impl(OrganizationRepo organizationRepo, SecurityService securityService) {
+    public OrganizationServiceV1Impl(
+            OrganizationRepo organizationRepo,
+            PointOfPresenceRepo pointOfPresenceRepo,
+            DepartmentRepo departmentRepo,
+            PositionRepo positionRepo,
+            SecurityService securityService
+    ) {
         this.organizationRepo = organizationRepo;
+        this.pointOfPresenceRepo = pointOfPresenceRepo;
+        this.departmentRepo = departmentRepo;
+        this.positionRepo = positionRepo;
         this.securityService = securityService;
     }
 
@@ -40,6 +57,18 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     @Override
     public Page<Organization> findAllByOgrn(String ogrn, Pageable pageable) {
         return organizationRepo.findAllByOgrnStartingWithAndStatus(ogrn, EntityStatus.ACTIVE, pageable);
+    }
+
+    @Override
+    @Transactional
+    @Cacheable(cacheNames = {"organizationWithDependencies"}, key = "#orgId")
+    public Organization findByIdWithAllDependencies(Long orgId) throws MyException {
+        Organization organization = organizationRepo.findByIdAndStatus(orgId, EntityStatus.ACTIVE)
+                .orElseThrow(()->new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
+        organization.setPointOfPresences(pointOfPresenceRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE));
+        organization.setDepartments(departmentRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE));
+        organization.setPositions(positionRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE));
+        return organization;
     }
 
     private void fillOrganization(OrganizationDtoV1 organizationDtoV1, Organization organization) {
@@ -60,6 +89,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"organizationWithDependencies"}, allEntries = true)
     public Organization update(OrganizationDtoV1 organizationDtoV1) throws MyException {
         Organization organization = findById(organizationDtoV1.getId());
         fillOrganization(organizationDtoV1, organization);
@@ -67,6 +97,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"organizationWithDependencies"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         Organization organization = findById(id);
         organization.setStatus(EntityStatus.DELETED);
@@ -78,7 +109,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     @Override
     public Organization findById(Long id) throws MyException {
         return organizationRepo.findByIdAndStatus(id, EntityStatus.ACTIVE)
-                .orElseThrow(()->new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -91,7 +122,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
         return organizationRepo.findAllByStatus(EntityStatus.ACTIVE);
     }
 
-//    @Override
+    //    @Override
 //    public List<Organization> findAll() {
 //        List<Organization> organizations = new ArrayList<>();
 //        organizationRepo.findAll().forEach(organizations::add);
