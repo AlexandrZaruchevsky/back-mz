@@ -20,7 +20,7 @@ public class OrganizationDtoV1 {
     List<PointOfPresenceDtoV1> pofs;
     List<DepartmentDtoV2> departments;
     List<PositionDtoV1> positions;
-    EmployeeDtoV1 employeeDtoV1;
+    EmployeeDtoV1 boss;
 
     public static OrganizationDtoV1 create(Organization organization) {
         return new OrganizationDtoV1(
