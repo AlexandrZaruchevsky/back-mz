@@ -11,6 +11,6 @@ public interface OrganizationServiceV1 extends CrudServiceV1<Organization, Organ
     Page<Organization> findAllByInn(String inn, Pageable pageable);
     Page<Organization> findAllByOgrn(String ogrn, Pageable pageable);
 
-    Organization findByIdWithAllDependencies(Long orgId) throws MyException;
+    OrganizationDtoV1 findByIdWithAllDependencies(Long orgId) throws MyException;
 
 }

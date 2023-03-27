@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.az.mz.dto.v1.OrganizationDtoV1;
 import ru.az.mz.model.EntityStatus;
 import ru.az.mz.model.Organization;
-import ru.az.mz.repositories.DepartmentRepo;
-import ru.az.mz.repositories.OrganizationRepo;
-import ru.az.mz.repositories.PointOfPresenceRepo;
-import ru.az.mz.repositories.PositionRepo;
+import ru.az.mz.repositories.*;
 import ru.az.mz.services.MyException;
 import ru.az.mz.services.NotFoundException;
 import ru.az.mz.services.OrganizationServiceV1;
@@ -28,6 +25,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     private final PointOfPresenceRepo pointOfPresenceRepo;
     private final DepartmentRepo departmentRepo;
     private final PositionRepo positionRepo;
+    private final EmployeeRepo employeeRepo;
     private final SecurityService securityService;
 
     public OrganizationServiceV1Impl(
@@ -35,12 +33,14 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
             PointOfPresenceRepo pointOfPresenceRepo,
             DepartmentRepo departmentRepo,
             PositionRepo positionRepo,
+            EmployeeRepo employeeRepo,
             SecurityService securityService
     ) {
         this.organizationRepo = organizationRepo;
         this.pointOfPresenceRepo = pointOfPresenceRepo;
         this.departmentRepo = departmentRepo;
         this.positionRepo = positionRepo;
+        this.employeeRepo = employeeRepo;
         this.securityService = securityService;
     }
 
@@ -62,13 +62,17 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     @Override
     @Transactional
     @Cacheable(cacheNames = {"organizationWithDependencies"}, key = "#orgId")
-    public Organization findByIdWithAllDependencies(Long orgId) throws MyException {
+    public OrganizationDtoV1 findByIdWithAllDependencies(Long orgId) throws MyException {
         Organization organization = organizationRepo.findByIdAndStatus(orgId, EntityStatus.ACTIVE)
-                .orElseThrow(()->new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
-        organization.setPointOfPresences(pointOfPresenceRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE));
-        organization.setDepartments(departmentRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE));
-        organization.setPositions(positionRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE));
-        return organization;
+                .orElseThrow(() -> new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
+        return OrganizationDtoV1.createWithAll(
+                organization,
+                pointOfPresenceRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE),
+                departmentRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE),
+                positionRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE),
+                employeeRepo.findByIdAndStatus(organization.getBossId(), EntityStatus.ACTIVE)
+                        .orElse(null)
+        );
     }
 
     private void fillOrganization(OrganizationDtoV1 organizationDtoV1, Organization organization) {
