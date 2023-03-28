@@ -32,10 +32,11 @@ public class PointOfPresenceRestControllerV1 {
     public Page<PointOfPresenceDtoV1> findAll(
             PageRequestDtoV1 pageRequestDtoV1
     ) {
-        PageRequest pageRequest = pageRequestDtoV1 == null
-                ? setupParameters.getPageRequestDefault()
-                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize());
-        return pointOfPresenceServiceV1.findAll(pageRequest).map(PointOfPresenceDtoV1::createWithOrganization);
+//        PageRequest pageRequest = pageRequestDtoV1 == null
+//                ? setupParameters.getPageRequestDefault()
+//                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize());
+//        return pointOfPresenceServiceV1.findAll(pageRequest).map(PointOfPresenceDtoV1::createWithOrganization);
+        return pointOfPresenceServiceV1.findAll(pageRequestDtoV1).map(PointOfPresenceDtoV1::createWithOrganization);
     }
 
     @GetMapping("{id}")

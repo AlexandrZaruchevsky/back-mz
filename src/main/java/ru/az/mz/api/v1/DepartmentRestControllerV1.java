@@ -1,16 +1,12 @@
 package ru.az.mz.api.v1;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.az.mz.config.SetupParameters;
-import ru.az.mz.dto.v1.DepartmentDtoV1;
 import ru.az.mz.dto.v1.DepartmentDtoV2;
 import ru.az.mz.dto.v1.PageRequestDtoV1;
-import ru.az.mz.model.Department;
-import ru.az.mz.model.EntityStatus;
 import ru.az.mz.services.DepartmentServiceV1;
 import ru.az.mz.services.MyException;
 
@@ -55,11 +51,11 @@ public class DepartmentRestControllerV1 {
     ) throws MyException {
         return orgId > 0
                 ? departmentServiceV1.findAllByOrgId(orgId).stream()
-                    .map(DepartmentDtoV2::createWithOrganization)
-                    .collect(Collectors.toList())
+                .map(DepartmentDtoV2::createWithOrganization)
+                .collect(Collectors.toList())
                 : departmentServiceV1.findAll().stream()
-                    .map(DepartmentDtoV2::createWithOrganization)
-                    .collect(Collectors.toList());
+                .map(DepartmentDtoV2::createWithOrganization)
+                .collect(Collectors.toList());
     }
 
     @PostMapping

@@ -2,9 +2,13 @@ package ru.az.mz.services.impl;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.az.mz.config.SetupParameters;
+import ru.az.mz.dto.v1.PageRequestDtoV1;
 import ru.az.mz.dto.v1.PointOfPresenceDtoV1;
 import ru.az.mz.model.EntityStatus;
 import ru.az.mz.model.PointOfPresence;
@@ -25,21 +29,39 @@ public class PointOfPresenceServiceV1Impl implements PointOfPresenceServiceV1 {
     private final SecurityService securityService;
     private final OrganizationServiceV1 organizationServiceV1;
     private final OrganizationRepo organizationRepo;
+    private final SetupParameters setupParameters;
 
     public PointOfPresenceServiceV1Impl(
             PointOfPresenceRepo pointOfPresenceRepo,
             SecurityService securityService,
             OrganizationServiceV1 organizationServiceV1,
-            OrganizationRepo organizationRepo) {
+            OrganizationRepo organizationRepo,
+            SetupParameters setupParameters
+    ) {
         this.pointOfPresenceRepo = pointOfPresenceRepo;
         this.securityService = securityService;
         this.organizationServiceV1 = organizationServiceV1;
         this.organizationRepo = organizationRepo;
+        this.setupParameters = setupParameters;
     }
 
     @Override
     public Page<PointOfPresence> findByName(String name, Pageable pageable) {
         return pointOfPresenceRepo.findAllByShortNameStartingWithAndStatus(name, EntityStatus.ACTIVE, pageable);
+    }
+
+    @Override
+    public Page<PointOfPresence> findAll(PageRequestDtoV1 pageRequest) {
+        PageRequest request = pageRequest == null
+                ? setupParameters.getPageRequestDefault()
+                : PageRequest.of(pageRequest.getPageCurrent(), pageRequest.getPageSize());
+        if (pageRequest != null && pageRequest.getSortBy() != null && !"".equalsIgnoreCase(pageRequest.getSortBy().trim())) {
+            request = request.withSort(Sort.by(pageRequest.getSortBy()));
+        }
+        if (pageRequest != null && pageRequest.getSearch().trim().length() > 0) {
+            return pointOfPresenceRepo.findAllByShortNameContainingAndStatus(pageRequest.getSearch().trim(), EntityStatus.ACTIVE, request);
+        }
+        return pointOfPresenceRepo.findAllByStatus(EntityStatus.ACTIVE, request);
     }
 
     @Override

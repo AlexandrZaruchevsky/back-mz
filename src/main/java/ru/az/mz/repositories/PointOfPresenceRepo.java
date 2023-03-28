@@ -23,6 +23,9 @@ public interface PointOfPresenceRepo extends PagingAndSortingRepository<PointOfP
     Page<PointOfPresence> findAllByShortNameStartingWithAndStatus(String name, EntityStatus status, Pageable pageable);
 
     @EntityGraph("PointOfPresence.withOrganization")
+    Page<PointOfPresence> findAllByShortNameContainingAndStatus(String name, EntityStatus status, Pageable pageable);
+
+    @EntityGraph("PointOfPresence.withOrganization")
     List<PointOfPresence> findAllByOrganizationAndStatus(Organization organization, EntityStatus status);
 
 

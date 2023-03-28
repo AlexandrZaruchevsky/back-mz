@@ -90,6 +90,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList"}, allEntries = true)
     public Organization add(OrganizationDtoV1 organizationDtoV1) {
         Organization organization = new Organization();
         fillOrganization(organizationDtoV1, organization);
@@ -97,7 +98,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"organizationWithDependencies"}, allEntries = true)
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList"}, allEntries = true)
     public Organization update(OrganizationDtoV1 organizationDtoV1) throws MyException {
         Organization organization = findById(organizationDtoV1.getId());
         fillOrganization(organizationDtoV1, organization);
@@ -105,7 +106,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"organizationWithDependencies"}, key = "#orgId")
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList"}, allEntries = true)
     public boolean delete(long orgId) throws MyException {
         Organization organization = findById(orgId);
         organization.setStatus(EntityStatus.DELETED);
@@ -126,6 +127,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     }
 
     @Override
+    @Cacheable(cacheNames = {"orgList"})
     public List<Organization> findAll() {
         return organizationRepo.findAllByStatus(EntityStatus.ACTIVE);
     }

@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.az.mz.config.SetupParameters;
-import ru.az.mz.dto.v1.DepartmentDtoV1;
 import ru.az.mz.dto.v1.DepartmentDtoV2;
 import ru.az.mz.dto.v1.PageRequestDtoV1;
 import ru.az.mz.model.Department;
@@ -122,8 +121,8 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
         organizationRepo.findById(orgId).ifPresent(organization ->
                 deps.addAll(
                         departmentRepo.findAllByOrganizationAndStatus(organization, EntityStatus.ACTIVE).stream()
-                            .sorted(Comparator.comparing(Department::getName))
-                            .collect(Collectors.toList())
+                                .sorted(Comparator.comparing(Department::getName))
+                                .collect(Collectors.toList())
                 )
         );
         return deps;
