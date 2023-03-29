@@ -1,5 +1,8 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -38,6 +41,7 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
     }
 
     @Override
+    @Cacheable(cacheNames = {"employees"}, key = "{#fio, #pageable.pageSize, #pageable.pageNumber}")
     public Page<Employee> findByFIO(String fio, Pageable pageable) {
         String[] name = fio.trim().split("\\s+");
         String lastName = "";
@@ -67,12 +71,14 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
     }
 
     @Override
+    @Cacheable(cacheNames = {"employees"}, key = "{#kspd, #pageable.pageSize, #pageable.pageNumber}")
     public Page<Employee> findByKspd(String kspd, Pageable pageable) {
         return employeeRepo.findAllByKspdStartingWithAndStatus(kspd, EntityStatus.ACTIVE, pageable);
     }
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"employees","employeeList"}, allEntries = true)
     public Employee add(EmployeeDtoV1 employeeDtoV1) throws MyException {
         Employee employee = new Employee();
         fillEmployee(employeeDtoV1, employee);
@@ -110,6 +116,7 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"employees","employeeList"}, allEntries = true)
     public Employee update(EmployeeDtoV1 employeeDtoV1) throws MyException {
         Employee employee = findById(employeeDtoV1.getId());
         fillEmployee(employeeDtoV1, employee);
@@ -117,6 +124,7 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"employees","employeeList"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         Employee employee = findById(id);
         employee.setStatus(EntityStatus.DELETED);
@@ -126,18 +134,21 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
     }
 
     @Override
-    public Employee findById(Long id) throws MyException {
-        return employeeRepo.findByIdAndStatus(id, EntityStatus.ACTIVE).orElseThrow(
+    @Cacheable(cacheNames = {"employees"}, key = "#emplId")
+    public Employee findById(Long emplId) throws MyException {
+        return employeeRepo.findByIdAndStatus(emplId, EntityStatus.ACTIVE).orElseThrow(
                 () -> new NotFoundException("Employee not found", HttpStatus.NOT_FOUND)
         );
     }
 
     @Override
+    @Cacheable(cacheNames = {"employees"}, key = "{#pageable.pageSize, #pageable.pageNumber}")
     public Page<Employee> findAll(Pageable pageable) {
         return employeeRepo.findAllByStatus(EntityStatus.ACTIVE, pageable);
     }
 
     @Override
+    @Cacheable(cacheNames = {"employeeList"})
     public List<Employee> findAll() {
         List<Employee> employees = new ArrayList<>();
         employeeRepo.findAll().forEach(employees::add);

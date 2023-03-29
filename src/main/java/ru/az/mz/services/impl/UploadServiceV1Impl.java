@@ -1,5 +1,6 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.az.mz.model.*;
@@ -44,6 +45,7 @@ public class UploadServiceV1Impl implements UploadServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList" ,"organizationWithEmployees"}, allEntries = true)
     public void loadTopDeps(List<ADUser> adUsers) throws MyException {
         Organization orgFromDb = organizationRepo.findById(1L).orElseThrow(() -> new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
         List<Department> depList = adUsers.stream()
@@ -65,6 +67,7 @@ public class UploadServiceV1Impl implements UploadServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList" ,"organizationWithEmployees"}, allEntries = true)
     public void loadDeps(List<ADUser> adUsers) throws MyException {
         Organization orgFromDb = organizationRepo.findById(1L).orElseThrow(() -> new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
         List<Department> topDeps = departmentRepo.findAllByTopLevelAndStatus(true, EntityStatus.ACTIVE);
@@ -89,6 +92,7 @@ public class UploadServiceV1Impl implements UploadServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList" ,"organizationWithEmployees"}, allEntries = true)
     public void loadPositions(List<ADUser> adUsers) throws MyException {
         Organization orgFromDb = organizationRepo.findById(1L).orElseThrow(() -> new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
         adUsers.stream()
@@ -108,6 +112,8 @@ public class UploadServiceV1Impl implements UploadServiceV1 {
     }
 
     @Override
+    @Transactional
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList" ,"organizationWithEmployees"}, allEntries = true)
     public void loadPointOfPresences(List<ADUser> adUsers) throws MyException {
         Organization orgFromDb = organizationRepo.findById(1L).orElseThrow(() -> new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
         adUsers.stream()
@@ -128,6 +134,7 @@ public class UploadServiceV1Impl implements UploadServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList" ,"organizationWithEmployees"}, allEntries = true)
     public void loadEmployees(List<ADUser> adUsers) throws MyException {
         Organization orgFromDb = organizationRepo.findById(1L).orElseThrow(() -> new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
         List<Department> deps = departmentRepo.findAllByOrganizationAndStatus(orgFromDb, EntityStatus.ACTIVE);
@@ -166,6 +173,7 @@ public class UploadServiceV1Impl implements UploadServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList" ,"organizationWithEmployees"}, allEntries = true)
     public void clearEmployeesWithDependencies() {
         employeeRepo.deleteAll();
         positionRepo.deleteAll();

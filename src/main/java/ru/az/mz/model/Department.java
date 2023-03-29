@@ -21,6 +21,10 @@ import java.util.List;
                         @NamedAttributeNode("organization"),
                         @NamedAttributeNode("employees")
                 }
+        ),
+        @NamedEntityGraph(
+                name = "Department.withEmployees",
+                attributeNodes = @NamedAttributeNode("employees")
         )
 })
 public class Department extends BaseEntity {

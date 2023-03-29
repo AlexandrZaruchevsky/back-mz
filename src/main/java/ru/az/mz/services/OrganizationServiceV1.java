@@ -13,4 +13,8 @@ public interface OrganizationServiceV1 extends CrudServiceV1<Organization, Organ
 
     OrganizationDtoV1 findByIdWithAllDependencies(Long orgId) throws MyException;
 
+    OrganizationDtoV1 findByIdWithAllEmployees(Long orgId) throws MyException;
+
+    OrganizationDtoV1 findByIdWithAllDepartments(Long orgId) throws MyException;
+
 }

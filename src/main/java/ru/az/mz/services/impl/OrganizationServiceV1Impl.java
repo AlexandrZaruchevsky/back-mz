@@ -79,6 +79,23 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
         );
     }
 
+    @Override
+    @Transactional
+    @Cacheable(cacheNames = "organizationWithEmployees", key = "#orgId")
+    public OrganizationDtoV1 findByIdWithAllEmployees(Long orgId) throws MyException {
+        Organization orgFromDb = organizationRepo.findByIdAndStatus(orgId, EntityStatus.ACTIVE)
+                .orElseThrow(() -> new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
+        List<Employee> employees = departmentRepo.findAllByOrOrganizationAndStatus(orgFromDb, EntityStatus.ACTIVE).stream()
+                .flatMap(department -> department.getEmployees().stream())
+                .collect(Collectors.toList());
+        return OrganizationDtoV1.createWithEmployees(orgFromDb,employees);
+    }
+
+    @Override
+    public OrganizationDtoV1 findByIdWithAllDepartments(Long orgId) throws MyException {
+        throw new MyException("Method findByIdWithAllDepartments not implemented", HttpStatus.BAD_REQUEST);
+    }
+
     private void fillOrganization(OrganizationDtoV1 organizationDtoV1, Organization organization) {
         organization.setShortName(organizationDtoV1.getShortName());
         organization.setFullName(organizationDtoV1.getFullName());
@@ -90,7 +107,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList"}, allEntries = true)
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList" ,"organizationWithEmployees"}, allEntries = true)
     public Organization add(OrganizationDtoV1 organizationDtoV1) {
         Organization organization = new Organization();
         fillOrganization(organizationDtoV1, organization);
@@ -98,7 +115,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList"}, allEntries = true)
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList", "organizationWithEmployees"}, allEntries = true)
     public Organization update(OrganizationDtoV1 organizationDtoV1) throws MyException {
         Organization organization = findById(organizationDtoV1.getId());
         fillOrganization(organizationDtoV1, organization);
@@ -106,7 +123,7 @@ public class OrganizationServiceV1Impl implements OrganizationServiceV1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList"}, allEntries = true)
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "orgList", "organizationWithEmployees"}, allEntries = true)
     public boolean delete(long orgId) throws MyException {
         Organization organization = findById(orgId);
         organization.setStatus(EntityStatus.DELETED);

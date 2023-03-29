@@ -20,6 +20,7 @@ public class OrganizationDtoV1 {
     List<PointOfPresenceDtoV1> pofs;
     List<DepartmentDtoV2> departments;
     List<PositionDtoV1> positions;
+    List<EmployeeDtoV1> employees;
     EmployeeDtoV1 boss;
 
     public static OrganizationDtoV1 create(Organization organization) {
@@ -31,6 +32,7 @@ public class OrganizationDtoV1 {
                 organization.getKpp(),
                 organization.getOgrn(),
                 organization.getBossId(),
+                Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -50,6 +52,7 @@ public class OrganizationDtoV1 {
                 getPointOfPresenceDtoV1s(organization),
                 Collections.emptyList(),
                 Collections.emptyList(),
+                Collections.emptyList(),
                 null
         );
     }
@@ -65,6 +68,7 @@ public class OrganizationDtoV1 {
                 organization.getBossId(),
                 Collections.emptyList(),
                 getDepartmentDtoV2s(organization),
+                Collections.emptyList(),
                 Collections.emptyList(),
                 null
         );
@@ -82,6 +86,7 @@ public class OrganizationDtoV1 {
                 Collections.emptyList(),
                 Collections.emptyList(),
                 getPositionDtoV1s(organization),
+                Collections.emptyList(),
                 null
         );
     }
@@ -98,6 +103,7 @@ public class OrganizationDtoV1 {
                 getPointOfPresenceDtoV1s(organization),
                 getDepartmentDtoV2s(organization),
                 getPositionDtoV1s(organization),
+                Collections.emptyList(),
                 employee != null ? EmployeeDtoV1.create(employee) : null
         );
     }
@@ -120,7 +126,28 @@ public class OrganizationDtoV1 {
                 getPointOfPresenceDtoV1s(pointOfPresences),
                 getDepartmentDtoV2s(departments),
                 getPositionDtoV1s(positions),
+                Collections.emptyList(),
                 employee != null ? EmployeeDtoV1.create(employee) : null
+        );
+    }
+
+    public static OrganizationDtoV1 createWithEmployees(
+            Organization organization,
+            List<Employee> employees
+    ){
+        return new OrganizationDtoV1(
+                organization.getId(),
+                organization.getShortName(),
+                organization.getFullName(),
+                organization.getInn(),
+                organization.getKpp(),
+                organization.getOgrn(),
+                organization.getBossId(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                getEmployeeDtoV1s(employees),
+                null
         );
     }
 
@@ -157,6 +184,12 @@ public class OrganizationDtoV1 {
     private static List<PositionDtoV1> getPositionDtoV1s(List<Position> positions) {
         return positions != null && positions.size() > 0
                 ? positions.stream().map(PositionDtoV1::create).collect(Collectors.toList())
+                : Collections.emptyList();
+    }
+
+    private static List<EmployeeDtoV1> getEmployeeDtoV1s(List<Employee> employees) {
+        return employees != null && employees.size() > 0
+                ? employees.stream().map(EmployeeDtoV1::create).collect(Collectors.toList())
                 : Collections.emptyList();
     }
 }
