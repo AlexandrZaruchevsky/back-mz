@@ -15,17 +15,15 @@ public class EquipDtoV1 {
     String inventoryNumber;
     String manufacturer;
     LocalDate dateOfManufacture;
+    Long armId;
+    String armName;
+    Long equipTypeId;
+    String equipTypeName;
+    Long equipModelId;
+    String equipModelName;
 
-    ArmDtoV1 arm;
-    EquipTypeDtoV1 equipType;
-    EquipModelDtoV1 equipModel;
 
-    private static EquipDtoV1 createDefault(
-            Equip equip,
-            ArmDtoV1 arm,
-            EquipTypeDtoV1 equipType,
-            EquipModelDtoV1 equipModel
-    ) {
+    public static EquipDtoV1 create(Equip equip) {
         return new EquipDtoV1(
                 equip.getId(),
                 equip.getShortName(),
@@ -34,15 +32,9 @@ public class EquipDtoV1 {
                 equip.getInventoryNumber(),
                 equip.getManufacturer(),
                 equip.getDateOfManufacture(),
-                arm,
-                equipType,
-                equipModel
-        );
-    }
-
-    public static EquipDtoV1 create(Equip equip) {
-        return createDefault(
-                equip,
+                null,
+                null,
+                null,
                 null,
                 null,
                 null
@@ -50,17 +42,20 @@ public class EquipDtoV1 {
     }
 
     public static EquipDtoV1 createWithAll(Equip equip) {
-        return createDefault(
-                equip,
-                equip.getArm() != null
-                        ? ArmDtoV1.create(equip.getArm())
-                        : null,
-                equip.getEquipType() != null
-                        ? EquipTypeDtoV1.create(equip.getEquipType())
-                        : null,
-                equip.getEquipModel() != null
-                        ? EquipModelDtoV1.create(equip.getEquipModel())
-                        : null
+        return new EquipDtoV1(
+                equip.getId(),
+                equip.getShortName(),
+                equip.getFullName(),
+                equip.getSerialNumber(),
+                equip.getInventoryNumber(),
+                equip.getManufacturer(),
+                equip.getDateOfManufacture(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
         );
     }
 

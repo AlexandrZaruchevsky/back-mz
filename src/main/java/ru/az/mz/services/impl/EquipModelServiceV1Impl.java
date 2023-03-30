@@ -1,12 +1,17 @@
 package ru.az.mz.services.impl;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.az.mz.config.SetupParameters;
 import ru.az.mz.dto.v1.EquipModelDtoV1;
+import ru.az.mz.dto.v1.PageRequestDtoV1;
 import ru.az.mz.model.EntityStatus;
 import ru.az.mz.model.EquipModel;
+import ru.az.mz.model.EquipType;
 import ru.az.mz.repositories.EquipModelRepo;
 import ru.az.mz.repositories.EquipTypeRepo;
 import ru.az.mz.services.EquipModelServiceV1;
@@ -23,19 +28,48 @@ public class EquipModelServiceV1Impl implements EquipModelServiceV1 {
     private final EquipModelRepo equipModelRepo;
     private final EquipTypeRepo equipTypeRepo;
     private final SecurityService securityService;
+    private final SetupParameters setupParameters;
 
     public EquipModelServiceV1Impl(
             EquipModelRepo equipModelRepo,
-            EquipTypeRepo equipTypeRepo, SecurityService securityService
-    ) {
+            EquipTypeRepo equipTypeRepo, SecurityService securityService,
+            SetupParameters setupParameters) {
         this.equipModelRepo = equipModelRepo;
         this.equipTypeRepo = equipTypeRepo;
         this.securityService = securityService;
+        this.setupParameters = setupParameters;
     }
 
     @Override
     public Page<EquipModel> findAllByName(String name, Pageable pageable) {
         return equipModelRepo.findAllByNameStartingWithAndStatus(name, EntityStatus.ACTIVE, pageable);
+    }
+
+    @Override
+    @Transactional
+    public Page<EquipModelDtoV1> findAllByName(PageRequestDtoV1 pageRequest) throws MyException {
+        if (pageRequest == null) {
+            return equipModelRepo.findAllByStatus(
+                    EntityStatus.ACTIVE,
+                    setupParameters.getPageRequestDefault()
+                            .withSort(Sort.by("name"))
+            ).map(EquipModelDtoV1::createWithEquipType);
+        }
+        PageRequest request = PageRequest.of(pageRequest.getPageCurrent(), pageRequest.getPageSize());
+        if ("".equalsIgnoreCase(pageRequest.getSortBy().trim())) {
+            request = request.withSort(Sort.by("name"));
+        } else {
+            request = request.withSort(Sort.by(pageRequest.getSortBy().trim()));
+        }
+        if (pageRequest.getParentId() >= 0) {
+            EquipType orgFromDb = equipTypeRepo.findById(pageRequest.getParentId())
+                    .orElseThrow(() -> new NotFoundException("Organization not found", HttpStatus.NOT_FOUND));
+            return equipModelRepo.findAllByEquipTypeAndNameContainingAndStatus(orgFromDb, pageRequest.getSearch().trim(), EntityStatus.ACTIVE, request)
+                    .map(EquipModelDtoV1::createWithEquipType);
+        }
+
+        return equipModelRepo.findAllByNameStartingWithAndStatus(pageRequest.getSearch().trim(), EntityStatus.ACTIVE, request)
+                .map(EquipModelDtoV1::createWithEquipType);
     }
 
     @Override
@@ -45,12 +79,10 @@ public class EquipModelServiceV1Impl implements EquipModelServiceV1 {
 
     private void fillEquipModel(EquipModelDtoV1 equipModelDtoV1, EquipModel equipModel) {
         equipModel.setName(equipModelDtoV1.getName());
-        equipModel.setEquipType(
-                equipModelDtoV1.getEquipType() != null
-                        ? equipTypeRepo.findByIdAndStatus(equipModelDtoV1.getEquipType().getId(), EntityStatus.ACTIVE)
-                                .orElse(null)
-                        : null
-        );
+        if (equipModelDtoV1.getEquipTypeId() >= 0) {
+            equipTypeRepo.findById(equipModelDtoV1.getEquipTypeId())
+                    .ifPresent(equipModel::setEquipType);
+        }
         equipModel.setSaveByUser(securityService.getUsername());
     }
 

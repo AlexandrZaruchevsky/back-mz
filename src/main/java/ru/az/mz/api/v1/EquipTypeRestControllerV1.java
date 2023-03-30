@@ -11,6 +11,10 @@ import ru.az.mz.dto.v1.PageRequestDtoV1;
 import ru.az.mz.services.EquipTypeServiceV1;
 import ru.az.mz.services.MyException;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("api/v1/equip-types")
 public class EquipTypeRestControllerV1 {
@@ -41,6 +45,14 @@ public class EquipTypeRestControllerV1 {
             @PathVariable Long id
     ) throws MyException {
         return EquipTypeDtoV1.create(equipTypeServiceV1.findById(id));
+    }
+
+    @GetMapping("all")
+    @PreAuthorize("hasAnyAuthority('user:read','user:write')")
+    public List<EquipTypeDtoV1> findAll(){
+        return equipTypeServiceV1.findAll().stream()
+                .map(EquipTypeDtoV1::create)
+                .collect(Collectors.toList());
     }
 
     @PostMapping

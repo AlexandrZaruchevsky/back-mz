@@ -14,7 +14,9 @@ import ru.az.mz.services.NotFoundException;
 import ru.az.mz.services.SecurityService;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EquipTypeServiceV1Impl implements EquipTypeServiceV1 {
@@ -46,6 +48,7 @@ public class EquipTypeServiceV1Impl implements EquipTypeServiceV1 {
     }
 
     @Override
+    @Transactional
     public EquipType add(EquipTypeDtoV1 equipTypeDtoV1) throws MyException {
         EquipType equipType = new EquipType();
         fillEquipType(equipTypeDtoV1, equipType);
@@ -82,7 +85,10 @@ public class EquipTypeServiceV1Impl implements EquipTypeServiceV1 {
 
     @Override
     public List<EquipType> findAll() {
-        return equipTypeRepo.findAll();
+        return equipTypeRepo.findAll().stream()
+                .filter(equipType -> EntityStatus.ACTIVE.equals(equipType.getStatus()))
+                .sorted(Comparator.comparing(EquipType::getName))
+                .collect(Collectors.toList());
     }
 
     @Override

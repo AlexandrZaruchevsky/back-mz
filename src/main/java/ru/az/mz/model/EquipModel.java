@@ -16,6 +16,12 @@ import java.util.List;
         @NamedEntityGraph(
                 name = "EquipModel.withAll",
                 includeAllAttributes = true
+        ),
+        @NamedEntityGraph(
+                name = "EquipModel.withEquipType",
+                attributeNodes = {
+                        @NamedAttributeNode("equipType")
+                }
         )
 })
 public class EquipModel extends BaseEntity {

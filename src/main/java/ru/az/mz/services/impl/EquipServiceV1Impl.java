@@ -70,21 +70,21 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
         equip.setInventoryNumber(equipDtoV1.getInventoryNumber());
         equip.setManufacturer(equipDtoV1.getManufacturer());
         equip.setDateOfManufacture(equipDtoV1.getDateOfManufacture());
-        equip.setArm(
-                equipDtoV1.getArm() != null
-                        ? armRepo.findByIdAndStatus(equipDtoV1.getArm().getId(), EntityStatus.ACTIVE).orElse(null)
-                        : null
-        );
-        equip.setEquipType(
-                equipDtoV1.getEquipType() != null
-                        ? equipTypeRepo.findByIdAndStatus(equipDtoV1.getEquipType().getId(), EntityStatus.ACTIVE).orElse(null)
-                        : null
-        );
-        equip.setEquipModel(
-                equipDtoV1.getEquipModel() != null
-                        ? equipModelRepo.findByIdAndStatus(equipDtoV1.getEquipModel().getId(), EntityStatus.ACTIVE).orElse(null)
-                        : null
-        );
+//        equip.setArm(
+//                equipDtoV1.getArm() != null
+//                        ? armRepo.findByIdAndStatus(equipDtoV1.getArm().getId(), EntityStatus.ACTIVE).orElse(null)
+//                        : null
+//        );
+//        equip.setEquipType(
+//                equipDtoV1.getEquipType() != null
+//                        ? equipTypeRepo.findByIdAndStatus(equipDtoV1.getEquipType().getId(), EntityStatus.ACTIVE).orElse(null)
+//                        : null
+//        );
+//        equip.setEquipModel(
+//                equipDtoV1.getEquipModel() != null
+//                        ? equipModelRepo.findByIdAndStatus(equipDtoV1.getEquipModel().getId(), EntityStatus.ACTIVE).orElse(null)
+//                        : null
+//        );
         equip.setSaveByUser(securityService.getUsername());
     }
 

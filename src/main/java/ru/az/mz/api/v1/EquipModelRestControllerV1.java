@@ -30,11 +30,8 @@ public class EquipModelRestControllerV1 {
     @PreAuthorize("hasAnyAuthority('user:read','user:write')")
     public Page<EquipModelDtoV1> findAll(
             PageRequestDtoV1 pageRequestDtoV1
-    ) {
-        PageRequest pageRequest = pageRequestDtoV1 != null
-                ? PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize())
-                : setupParameters.getPageRequestDefault();
-        return equipModelServiceV1.findAll(pageRequest).map(EquipModelDtoV1::create);
+    ) throws MyException {
+        return equipModelServiceV1.findAllByName(pageRequestDtoV1);
     }
 
     @GetMapping("{id}")
@@ -42,7 +39,7 @@ public class EquipModelRestControllerV1 {
     public EquipModelDtoV1 findById(
             @PathVariable Long id
     ) throws MyException {
-        return EquipModelDtoV1.create(equipModelServiceV1.findById(id));
+        return EquipModelDtoV1.createWithEquipType(equipModelServiceV1.findById(id));
     }
 
     @PostMapping
