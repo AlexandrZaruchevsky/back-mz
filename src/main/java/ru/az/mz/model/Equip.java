@@ -14,6 +14,21 @@ import java.time.LocalDate;
         @NamedEntityGraph(
                 name = "Equip.withAll",
                 includeAllAttributes = true
+        ),
+        @NamedEntityGraph(
+                name = "Equip.withEquipType",
+                attributeNodes = @NamedAttributeNode("equipType")
+        ),
+        @NamedEntityGraph(
+                name = "Equip.withEquipModel",
+                attributeNodes = @NamedAttributeNode("equipModel")
+        ),
+        @NamedEntityGraph(
+                name = "equip.withEquipTypeAndEquipModel",
+                attributeNodes = {
+                        @NamedAttributeNode("equipType"),
+                        @NamedAttributeNode("equipModel")
+                }
         )
 })
 public class Equip extends BaseEntity{

@@ -1,5 +1,6 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -88,6 +89,7 @@ public class EquipModelServiceV1Impl implements EquipModelServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"equipParents"}, allEntries = true)
     public EquipModel add(EquipModelDtoV1 equipModelDtoV1) throws MyException {
         EquipModel equipModel = new EquipModel();
         fillEquipModel(equipModelDtoV1, equipModel);
@@ -96,6 +98,7 @@ public class EquipModelServiceV1Impl implements EquipModelServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"equipParents"}, allEntries = true)
     public EquipModel update(EquipModelDtoV1 equipModelDtoV1) throws MyException {
         EquipModel equipModel = findById(equipModelDtoV1.getId());
         fillEquipModel(equipModelDtoV1, equipModel);
@@ -104,6 +107,7 @@ public class EquipModelServiceV1Impl implements EquipModelServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"equipParents"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         EquipModel equipModel = findById(id);
         equipModel.setStatus(EntityStatus.DELETED);

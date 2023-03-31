@@ -12,7 +12,17 @@ import java.util.Optional;
 
 public interface EquipRepo extends PagingAndSortingRepository<Equip, Long> {
 
+    @EntityGraph("Equip.withEquipType")
     Page<Equip> findAllByStatus(EntityStatus status, Pageable pageable);
+
+    @EntityGraph("Equip.withEquipType")
+    Page<Equip> findAllByShortNameContainingAndStatus(String name, EntityStatus status, Pageable pageable);
+
+    @EntityGraph("Equip.withEquipType")
+    Page<Equip> findAllByInventoryNumberContainingAndStatus(String name, EntityStatus status, Pageable pageable);
+
+    @EntityGraph("Equip.withEquipType")
+    Page<Equip> findAllBySerialNumberContainingAndStatus(String name, EntityStatus status, Pageable pageable);
 
     Page<Equip> findAllByShortNameStartingWithAndStatus(String name, EntityStatus status, Pageable pageable);
 

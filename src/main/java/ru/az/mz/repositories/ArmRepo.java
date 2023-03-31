@@ -7,6 +7,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import ru.az.mz.model.Arm;
 import ru.az.mz.model.EntityStatus;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ArmRepo extends PagingAndSortingRepository<Arm, Long> {
@@ -19,6 +20,9 @@ public interface ArmRepo extends PagingAndSortingRepository<Arm, Long> {
 
     @EntityGraph("Arm.withAll")
     Optional<Arm> findByIdAndStatus(Long id, EntityStatus status);
+
+
+    List<Arm> findAllByStatus(EntityStatus status);
 
     long countByStatus(EntityStatus status);
 

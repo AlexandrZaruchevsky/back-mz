@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.az.mz.config.SetupParameters;
 import ru.az.mz.dto.v1.EquipDtoV1;
+import ru.az.mz.dto.v1.EquipParentsDtoV1;
 import ru.az.mz.dto.v1.PageRequestDtoV1;
 import ru.az.mz.services.EquipServiceV1;
 import ru.az.mz.services.MyException;
@@ -21,6 +22,12 @@ public class EquipRestControllerV1 {
     public EquipRestControllerV1(EquipServiceV1 equipServiceV1, SetupParameters setupParameters) {
         this.equipServiceV1 = equipServiceV1;
         this.setupParameters = setupParameters;
+    }
+
+    @GetMapping("equip-parents")
+    @PreAuthorize("hasAnyAuthority('user:read','user:write')")
+    public EquipParentsDtoV1 getEquipParents() {
+        return equipServiceV1.getEquipParents();
     }
 
     @GetMapping
@@ -39,7 +46,7 @@ public class EquipRestControllerV1 {
     public EquipDtoV1 findById(
             @PathVariable Long id
     ) throws MyException {
-        return EquipDtoV1.createWithAll(equipServiceV1.findById(id));
+        return EquipDtoV1.createWithEquipModel(equipServiceV1.findById(id));
     }
 
     @PostMapping

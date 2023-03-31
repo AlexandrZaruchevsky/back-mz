@@ -1,10 +1,14 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ru.az.mz.dto.v1.EquipDtoV1;
+import ru.az.mz.config.SetupParameters;
+import ru.az.mz.dto.v1.*;
 import ru.az.mz.model.EntityStatus;
 import ru.az.mz.model.Equip;
 import ru.az.mz.repositories.ArmRepo;
@@ -18,6 +22,7 @@ import ru.az.mz.services.SecurityService;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EquipServiceV1Impl implements EquipServiceV1 {
@@ -27,21 +32,23 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
     private final EquipTypeRepo equipTypeRepo;
     private final EquipModelRepo equipModelRepo;
     private final SecurityService securityService;
+    private final SetupParameters setupParameters;
 
     public EquipServiceV1Impl(
             EquipRepo equipRepo,
             ArmRepo armRepo,
             EquipTypeRepo equipTypeRepo,
             EquipModelRepo equipModelRepo,
-            SecurityService securityService
+            SecurityService securityService,
+            SetupParameters setupParameters
     ) {
         this.equipRepo = equipRepo;
         this.armRepo = armRepo;
         this.equipTypeRepo = equipTypeRepo;
         this.equipModelRepo = equipModelRepo;
         this.securityService = securityService;
+        this.setupParameters = setupParameters;
     }
-
 
     @Override
     public Page<Equip> findAllByName(String name, Pageable pageable) {
@@ -49,18 +56,54 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
     }
 
     @Override
+    public Page<EquipDtoV1> findAll(PageRequestDtoV1 pageRequest) {
+        if (pageRequest == null || "".equalsIgnoreCase(pageRequest.getSortBy().trim())) {
+            return equipRepo.findAllByStatus(
+                    EntityStatus.ACTIVE,
+                    setupParameters.getPageRequestDefault().withSort(Sort.by("shortName"))
+            ).map(EquipDtoV1::createWithEquipType);
+        }
+        PageRequest request = PageRequest.of(pageRequest.getPageCurrent(), pageRequest.getPageSize());
+        if (!"".equalsIgnoreCase(pageRequest.getSortBy().trim())) {
+            request = request.withSort(Sort.by(pageRequest.getSortBy().trim()));
+        }
+        switch (pageRequest.getSortBy().trim()) {
+            case "serialNumber":
+                return equipRepo.findAllBySerialNumberContainingAndStatus(pageRequest.getSearch(), EntityStatus.ACTIVE, request)
+                        .map(EquipDtoV1::createWithEquipType);
+            case "inventoryNumber":
+                return equipRepo.findAllByInventoryNumberContainingAndStatus(pageRequest.getSearch(), EntityStatus.ACTIVE, request)
+                        .map(EquipDtoV1::createWithEquipType);
+            default:
+                return equipRepo.findAllByShortNameContainingAndStatus(pageRequest.getSearch(), EntityStatus.ACTIVE, request)
+                        .map(EquipDtoV1::createWithEquipType);
+        }
+    }
+
+    @Override
     public Page<Equip> findAllByInventoryNumber(String inventoryNumber, Pageable pageable) {
-        return equipRepo.findAllByInventoryNumberStartingWithAndStatus(inventoryNumber, EntityStatus.ACTIVE, pageable);
+        return null;
     }
 
     @Override
     public Page<Equip> findAllBySerialNumber(String serialNumber, Pageable pageable) {
-        return equipRepo.findAllBySerialNumberStartingWithAndStatus(serialNumber, EntityStatus.ACTIVE, pageable);
+        return null;
     }
 
     @Override
     public List<Equip> findAllByStatus(EntityStatus status) {
         return equipRepo.findAllByStatus(status);
+    }
+
+    @Override
+    @Transactional
+    @Cacheable(cacheNames = "equipParents")
+    public EquipParentsDtoV1 getEquipParents() {
+        return new EquipParentsDtoV1(
+                armRepo.findAllByStatus(EntityStatus.ACTIVE).stream().map(ArmDtoV1::create).collect(Collectors.toList()),
+                equipTypeRepo.findAllByStatus(EntityStatus.ACTIVE).stream().map(EquipTypeDtoV1::create).collect(Collectors.toList()),
+                equipModelRepo.findAllByStatus(EntityStatus.ACTIVE).stream().map(EquipModelDtoV1::createWithEquipType).collect(Collectors.toList())
+        );
     }
 
     private void fillEquip(EquipDtoV1 equipDtoV1, Equip equip) {
@@ -70,21 +113,21 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
         equip.setInventoryNumber(equipDtoV1.getInventoryNumber());
         equip.setManufacturer(equipDtoV1.getManufacturer());
         equip.setDateOfManufacture(equipDtoV1.getDateOfManufacture());
-//        equip.setArm(
-//                equipDtoV1.getArm() != null
-//                        ? armRepo.findByIdAndStatus(equipDtoV1.getArm().getId(), EntityStatus.ACTIVE).orElse(null)
-//                        : null
-//        );
-//        equip.setEquipType(
-//                equipDtoV1.getEquipType() != null
-//                        ? equipTypeRepo.findByIdAndStatus(equipDtoV1.getEquipType().getId(), EntityStatus.ACTIVE).orElse(null)
-//                        : null
-//        );
-//        equip.setEquipModel(
-//                equipDtoV1.getEquipModel() != null
-//                        ? equipModelRepo.findByIdAndStatus(equipDtoV1.getEquipModel().getId(), EntityStatus.ACTIVE).orElse(null)
-//                        : null
-//        );
+        equip.setArm(
+                equipDtoV1.getArmId() != null && equipDtoV1.getArmId() > 0
+                        ? armRepo.findByIdAndStatus(equipDtoV1.getArmId(), EntityStatus.ACTIVE).orElse(null)
+                        : null
+        );
+        equip.setEquipType(
+                equipDtoV1.getEquipTypeId() != null && equipDtoV1.getEquipTypeId() > 0
+                        ? equipTypeRepo.findByIdAndStatus(equipDtoV1.getEquipTypeId(), EntityStatus.ACTIVE).orElse(null)
+                        : null
+        );
+        equip.setEquipModel(
+                equipDtoV1.getEquipModelId() != null && equipDtoV1.getEquipModelId() > 0
+                        ? equipModelRepo.findByIdAndStatus(equipDtoV1.getEquipModelId(), EntityStatus.ACTIVE).orElse(null)
+                        : null
+        );
         equip.setSaveByUser(securityService.getUsername());
     }
 

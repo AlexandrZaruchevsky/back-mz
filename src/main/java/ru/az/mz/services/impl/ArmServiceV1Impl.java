@@ -1,5 +1,6 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -47,13 +48,13 @@ public class ArmServiceV1Impl implements ArmServiceV1 {
         arm.setName(armDtoV1.getName());
         arm.setOffice(armDtoV1.getOffice());
         arm.setPointOfPresence(
-                armDtoV1.getPointOfPresence() != null
-                        ? pointOfPresenceRepo.findByIdAndStatus(armDtoV1.getPointOfPresence().getId(), EntityStatus.ACTIVE).orElse(null)
+                armDtoV1.getPopId() != null && armDtoV1.getPopId() > 0
+                        ? pointOfPresenceRepo.findByIdAndStatus(armDtoV1.getPopId(), EntityStatus.ACTIVE).orElse(null)
                         : null
-        );
+                );
         arm.setEmployee(
-                armDtoV1.getEmployee() != null
-                        ? employeeRepo.findByIdAndStatus(armDtoV1.getEmployee().getId(), EntityStatus.ACTIVE).orElse(null)
+                armDtoV1.getBoss() != null
+                        ? employeeRepo.findByIdAndStatus(armDtoV1.getBoss().getId(), EntityStatus.ACTIVE).orElse(null)
                         : null
         );
         arm.setSaveByUser(securityService.getUsername());
@@ -61,6 +62,7 @@ public class ArmServiceV1Impl implements ArmServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"equipParents"}, allEntries = true)
     public Arm add(ArmDtoV1 armDtoV1) throws MyException {
         Arm arm = new Arm();
         fillArm(armDtoV1, arm);
@@ -69,6 +71,7 @@ public class ArmServiceV1Impl implements ArmServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"equipParents"}, allEntries = true)
     public Arm update(ArmDtoV1 armDtoV1) throws MyException {
         Arm arm = armRepo.findByIdAndStatus(armDtoV1.getId(), EntityStatus.ACTIVE)
                 .orElseThrow(() -> new NotFoundException("Arm not found", HttpStatus.NOT_FOUND));
@@ -78,6 +81,7 @@ public class ArmServiceV1Impl implements ArmServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"equipParents"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         Arm arm = findById(id);
         arm.setStatus(EntityStatus.DELETED);

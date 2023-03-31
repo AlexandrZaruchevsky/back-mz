@@ -1,7 +1,9 @@
 package ru.az.mz.dto.v1;
 
 import lombok.Value;
+import org.springframework.http.HttpStatus;
 import ru.az.mz.model.Equip;
+import ru.az.mz.services.MyException;
 
 import java.time.LocalDate;
 
@@ -41,7 +43,26 @@ public class EquipDtoV1 {
         );
     }
 
-    public static EquipDtoV1 createWithAll(Equip equip) {
+    public static EquipDtoV1 createWithEquipType(Equip equip) {
+        return new EquipDtoV1(
+                equip.getId(),
+                equip.getShortName(),
+                equip.getFullName(),
+                equip.getSerialNumber(),
+                equip.getInventoryNumber(),
+                equip.getManufacturer(),
+                equip.getDateOfManufacture(),
+                null,
+                null,
+                equip.getEquipType() != null ? equip.getEquipType().getId() : null,
+                equip.getEquipType() != null ? equip.getEquipType().getName() : null,
+                null,
+                null
+        );
+    }
+
+
+    public static EquipDtoV1 createWithEquipModel(Equip equip) {
         return new EquipDtoV1(
                 equip.getId(),
                 equip.getShortName(),
@@ -54,8 +75,44 @@ public class EquipDtoV1 {
                 null,
                 null,
                 null,
+                equip.getEquipModel() != null ? equip.getEquipModel().getId() : null,
+                equip.getEquipModel() != null ? equip.getEquipModel().getName() : null
+        );
+    }
+
+    public static EquipDtoV1 createWithEquipTypeAndEquipModel(Equip equip) {
+        return new EquipDtoV1(
+                equip.getId(),
+                equip.getShortName(),
+                equip.getFullName(),
+                equip.getSerialNumber(),
+                equip.getInventoryNumber(),
+                equip.getManufacturer(),
+                equip.getDateOfManufacture(),
                 null,
-                null
+                null,
+                equip.getEquipType() != null ? equip.getEquipType().getId() : null,
+                equip.getEquipType() != null ? equip.getEquipType().getName() : null,
+                equip.getEquipModel() != null ? equip.getEquipModel().getId() : null,
+                equip.getEquipModel() != null ? equip.getEquipModel().getName() : null
+        );
+    }
+
+    public static EquipDtoV1 createWithAll(Equip equip) {
+        return new EquipDtoV1(
+                equip.getId(),
+                equip.getShortName(),
+                equip.getFullName(),
+                equip.getSerialNumber(),
+                equip.getInventoryNumber(),
+                equip.getManufacturer(),
+                equip.getDateOfManufacture(),
+                equip.getArm() != null ? equip.getArm().getId() : null,
+                equip.getArm() != null ? equip.getArm().getName() : null,
+                equip.getEquipType() != null ? equip.getEquipType().getId() : null,
+                equip.getEquipType() != null ? equip.getEquipType().getName() : null,
+                equip.getEquipModel() != null ? equip.getEquipModel().getId() : null,
+                equip.getEquipModel() != null ? equip.getEquipModel().getName() : null
         );
     }
 
