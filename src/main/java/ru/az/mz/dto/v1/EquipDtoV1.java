@@ -34,11 +34,11 @@ public class EquipDtoV1 {
                 equip.getInventoryNumber(),
                 equip.getManufacturer(),
                 equip.getDateOfManufacture(),
+                -1L,
                 null,
+                -1L,
                 null,
-                null,
-                null,
-                null,
+                -1L,
                 null
         );
     }
@@ -52,11 +52,11 @@ public class EquipDtoV1 {
                 equip.getInventoryNumber(),
                 equip.getManufacturer(),
                 equip.getDateOfManufacture(),
+                -1L,
                 null,
-                null,
-                equip.getEquipType() != null ? equip.getEquipType().getId() : null,
+                equip.getEquipType() != null ? equip.getEquipType().getId() : -1L,
                 equip.getEquipType() != null ? equip.getEquipType().getName() : null,
-                null,
+                -1L,
                 null
         );
     }
@@ -71,11 +71,11 @@ public class EquipDtoV1 {
                 equip.getInventoryNumber(),
                 equip.getManufacturer(),
                 equip.getDateOfManufacture(),
+                -1L,
                 null,
+                -1L,
                 null,
-                null,
-                null,
-                equip.getEquipModel() != null ? equip.getEquipModel().getId() : null,
+                equip.getEquipModel() != null ? equip.getEquipModel().getId() : -1L,
                 equip.getEquipModel() != null ? equip.getEquipModel().getName() : null
         );
     }
@@ -89,11 +89,11 @@ public class EquipDtoV1 {
                 equip.getInventoryNumber(),
                 equip.getManufacturer(),
                 equip.getDateOfManufacture(),
+                -1L,
                 null,
-                null,
-                equip.getEquipType() != null ? equip.getEquipType().getId() : null,
+                equip.getEquipType() != null ? equip.getEquipType().getId() : -1L,
                 equip.getEquipType() != null ? equip.getEquipType().getName() : null,
-                equip.getEquipModel() != null ? equip.getEquipModel().getId() : null,
+                equip.getEquipModel() != null ? equip.getEquipModel().getId() : -1L,
                 equip.getEquipModel() != null ? equip.getEquipModel().getName() : null
         );
     }
@@ -107,11 +107,11 @@ public class EquipDtoV1 {
                 equip.getInventoryNumber(),
                 equip.getManufacturer(),
                 equip.getDateOfManufacture(),
-                equip.getArm() != null ? equip.getArm().getId() : null,
+                equip.getArm() != null ? equip.getArm().getId() : -1L,
                 equip.getArm() != null ? equip.getArm().getName() : null,
-                equip.getEquipType() != null ? equip.getEquipType().getId() : null,
+                equip.getEquipType() != null ? equip.getEquipType().getId() : -1L,
                 equip.getEquipType() != null ? equip.getEquipType().getName() : null,
-                equip.getEquipModel() != null ? equip.getEquipModel().getId() : null,
+                equip.getEquipModel() != null ? equip.getEquipModel().getId() : -1L,
                 equip.getEquipModel() != null ? equip.getEquipModel().getName() : null
         );
     }

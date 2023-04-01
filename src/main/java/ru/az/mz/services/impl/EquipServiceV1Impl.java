@@ -56,7 +56,8 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
     }
 
     @Override
-    public Page<EquipDtoV1> findAll(PageRequestDtoV1 pageRequest) {
+    @Transactional
+    public Page<EquipDtoV1> findAll(PageRequestEquipDtoV1 pageRequest) throws MyException {
         if (pageRequest == null || "".equalsIgnoreCase(pageRequest.getSortBy().trim())) {
             return equipRepo.findAllByStatus(
                     EntityStatus.ACTIVE,
@@ -69,14 +70,95 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
         }
         switch (pageRequest.getSortBy().trim()) {
             case "serialNumber":
-                return equipRepo.findAllBySerialNumberContainingAndStatus(pageRequest.getSearch(), EntityStatus.ACTIVE, request)
-                        .map(EquipDtoV1::createWithEquipType);
+                return getEquipBySerialNumber(pageRequest, request);
             case "inventoryNumber":
-                return equipRepo.findAllByInventoryNumberContainingAndStatus(pageRequest.getSearch(), EntityStatus.ACTIVE, request)
-                        .map(EquipDtoV1::createWithEquipType);
+                return getEquipByInventoryNumber(pageRequest, request);
             default:
-                return equipRepo.findAllByShortNameContainingAndStatus(pageRequest.getSearch(), EntityStatus.ACTIVE, request)
-                        .map(EquipDtoV1::createWithEquipType);
+                return getEquipByShortName(pageRequest, request);
+        }
+    }
+
+    private Page<EquipDtoV1> getEquipBySerialNumber(PageRequestEquipDtoV1 pageRequest, PageRequest request) throws NotFoundException {
+        if (pageRequest.getEquipModelId() <= 0) {
+            if (pageRequest.getEquipTypeId() <= 0) {
+                return equipRepo.findAllByStatusAndSerialNumberContainingOrSerialNumberIsNull(
+                        EntityStatus.ACTIVE,
+                        pageRequest.getSearch(),
+                        request
+                ).map(EquipDtoV1::createWithEquipType);
+            } else {
+                return equipRepo.findAllByStatusAndEquipTypeAndSerialNumberContainingOrSerialNumberIsNull(
+                        EntityStatus.ACTIVE,
+                        equipTypeRepo.findByIdAndStatus(pageRequest.getEquipTypeId(), EntityStatus.ACTIVE)
+                                .orElseThrow(() -> new NotFoundException("Equip Type not found", HttpStatus.NOT_FOUND)),
+                        pageRequest.getSearch(),
+                        request
+                ).map(EquipDtoV1::createWithEquipType);
+            }
+        } else {
+            return equipRepo.findAllByStatusAndEquipModelAndSerialNumberContainingOrSerialNumberIsNull(
+                    EntityStatus.ACTIVE,
+                    equipModelRepo.findByIdAndStatus(pageRequest.getEquipModelId(), EntityStatus.ACTIVE)
+                            .orElseThrow(() -> new NotFoundException("Equip Model not found", HttpStatus.NOT_FOUND)),
+                    pageRequest.getSearch(),
+                    request
+            ).map(EquipDtoV1::createWithEquipType);
+        }
+    }
+
+    private Page<EquipDtoV1> getEquipByInventoryNumber(PageRequestEquipDtoV1 pageRequest, PageRequest request) throws NotFoundException {
+        if (pageRequest.getEquipModelId() <= 0) {
+            if (pageRequest.getEquipTypeId() <= 0) {
+                return equipRepo.findAllByStatusAndInventoryNumberContainingOrInventoryNumberIsNull(
+                        EntityStatus.ACTIVE,
+                        pageRequest.getSearch(),
+                        request
+                ).map(EquipDtoV1::createWithEquipType);
+            } else {
+                return equipRepo.findAllByStatusAndEquipTypeAndInventoryNumberContainingOrInventoryNumberIsNull(
+                        EntityStatus.ACTIVE,
+                        equipTypeRepo.findByIdAndStatus(pageRequest.getEquipTypeId(), EntityStatus.ACTIVE)
+                                .orElseThrow(() -> new NotFoundException("Equip Type not found", HttpStatus.NOT_FOUND)),
+                        pageRequest.getSearch(),
+                        request
+                ).map(EquipDtoV1::createWithEquipType);
+            }
+        } else {
+            return equipRepo.findAllByStatusAndEquipModelAndInventoryNumberContainingOrInventoryNumberIsNull(
+                    EntityStatus.ACTIVE,
+                    equipModelRepo.findByIdAndStatus(pageRequest.getEquipModelId(), EntityStatus.ACTIVE)
+                            .orElseThrow(() -> new NotFoundException("Equip Model not found", HttpStatus.NOT_FOUND)),
+                    pageRequest.getSearch(),
+                    request
+            ).map(EquipDtoV1::createWithEquipType);
+        }
+    }
+
+    private Page<EquipDtoV1> getEquipByShortName(PageRequestEquipDtoV1 pageRequest, PageRequest request) throws NotFoundException {
+        if (pageRequest.getEquipModelId() <= 0) {
+            if (pageRequest.getEquipTypeId() <= 0) {
+                return equipRepo.findAllByStatusAndShortNameContainingOrShortNameIsNull(
+                        EntityStatus.ACTIVE,
+                        pageRequest.getSearch(),
+                        request
+                ).map(EquipDtoV1::createWithEquipType);
+            } else {
+                return equipRepo.findAllByStatusAndEquipTypeAndShortNameContainingOrShortNameIsNull(
+                        EntityStatus.ACTIVE,
+                        equipTypeRepo.findByIdAndStatus(pageRequest.getEquipTypeId(), EntityStatus.ACTIVE)
+                                .orElseThrow(() -> new NotFoundException("Equip Type not found", HttpStatus.NOT_FOUND)),
+                        pageRequest.getSearch(),
+                        request
+                ).map(EquipDtoV1::createWithEquipType);
+            }
+        } else {
+            return equipRepo.findAllByStatusAndEquipModelAndShortNameContainingOrShortNameIsNull(
+                    EntityStatus.ACTIVE,
+                    equipModelRepo.findByIdAndStatus(pageRequest.getEquipModelId(), EntityStatus.ACTIVE)
+                            .orElseThrow(() -> new NotFoundException("Equip Model not found", HttpStatus.NOT_FOUND)),
+                    pageRequest.getSearch(),
+                    request
+            ).map(EquipDtoV1::createWithEquipType);
         }
     }
 

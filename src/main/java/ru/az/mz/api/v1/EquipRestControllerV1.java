@@ -9,6 +9,7 @@ import ru.az.mz.config.SetupParameters;
 import ru.az.mz.dto.v1.EquipDtoV1;
 import ru.az.mz.dto.v1.EquipParentsDtoV1;
 import ru.az.mz.dto.v1.PageRequestDtoV1;
+import ru.az.mz.dto.v1.PageRequestEquipDtoV1;
 import ru.az.mz.services.EquipServiceV1;
 import ru.az.mz.services.MyException;
 
@@ -33,12 +34,13 @@ public class EquipRestControllerV1 {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('user:read','user:write')")
     public Page<EquipDtoV1> findAll(
-            PageRequestDtoV1 pageRequestDtoV1
-    ) {
-        PageRequest pageRequest = pageRequestDtoV1 != null
-                ? PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize())
-                : setupParameters.getPageRequestDefault();
-        return equipServiceV1.findAll(pageRequest).map(EquipDtoV1::create);
+            PageRequestEquipDtoV1 pageRequestDtoV1
+    ) throws MyException {
+        return equipServiceV1.findAll(pageRequestDtoV1);
+//        PageRequest pageRequest = pageRequestDtoV1 != null
+//                ? PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize())
+//                : setupParameters.getPageRequestDefault();
+//        return equipServiceV1.findAll(pageRequest).map(EquipDtoV1::create);
     }
 
     @GetMapping("{id}")
@@ -46,7 +48,7 @@ public class EquipRestControllerV1 {
     public EquipDtoV1 findById(
             @PathVariable Long id
     ) throws MyException {
-        return EquipDtoV1.createWithEquipModel(equipServiceV1.findById(id));
+        return EquipDtoV1.createWithAll(equipServiceV1.findById(id));
     }
 
     @PostMapping
