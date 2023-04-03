@@ -33,6 +33,10 @@ public interface EmployeeRepo extends PagingAndSortingRepository<Employee, Long>
             Pageable pageable
     );
 
+    boolean existsByAccountNameAndStatus(String accountName, EntityStatus status);
+
+    Optional<Employee> findByAccountNameAndStatus(String accountName, EntityStatus status);
+
     long countByStatus(EntityStatus status);
 
 }

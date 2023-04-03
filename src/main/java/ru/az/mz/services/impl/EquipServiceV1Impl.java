@@ -9,12 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.az.mz.config.SetupParameters;
 import ru.az.mz.dto.v1.*;
+import ru.az.mz.model.Employee;
 import ru.az.mz.model.EntityStatus;
 import ru.az.mz.model.Equip;
-import ru.az.mz.repositories.ArmRepo;
-import ru.az.mz.repositories.EquipModelRepo;
-import ru.az.mz.repositories.EquipRepo;
-import ru.az.mz.repositories.EquipTypeRepo;
+import ru.az.mz.repositories.*;
 import ru.az.mz.services.EquipServiceV1;
 import ru.az.mz.services.MyException;
 import ru.az.mz.services.NotFoundException;
@@ -22,6 +20,7 @@ import ru.az.mz.services.SecurityService;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +30,7 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
     private final ArmRepo armRepo;
     private final EquipTypeRepo equipTypeRepo;
     private final EquipModelRepo equipModelRepo;
+    private final EmployeeRepo employeeRepo;
     private final SecurityService securityService;
     private final SetupParameters setupParameters;
 
@@ -39,6 +39,7 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
             ArmRepo armRepo,
             EquipTypeRepo equipTypeRepo,
             EquipModelRepo equipModelRepo,
+            EmployeeRepo employeeRepo,
             SecurityService securityService,
             SetupParameters setupParameters
     ) {
@@ -46,6 +47,7 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
         this.armRepo = armRepo;
         this.equipTypeRepo = equipTypeRepo;
         this.equipModelRepo = equipModelRepo;
+        this.employeeRepo = employeeRepo;
         this.securityService = securityService;
         this.setupParameters = setupParameters;
     }
@@ -200,13 +202,13 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
     }
 
     @Override
-    public EquipDtoV1 findChildById(Long id) throws MyException{
+    public EquipDtoV1 findChildById(Long id) throws MyException {
         return EquipDtoV1.createWithAll(
                 equipRepo.findByIdAndChildrenAndStatus(
                         id,
                         true,
                         EntityStatus.ACTIVE
-                ).orElseThrow(()-> new NotFoundException("Equip child not found", HttpStatus.NOT_FOUND))
+                ).orElseThrow(() -> new NotFoundException("Equip child not found", HttpStatus.NOT_FOUND))
         );
     }
 
@@ -221,6 +223,25 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
         );
     }
 
+    @Override
+    @Transactional
+    public EquipDtoV1 findByIdWithMol(Long id) throws MyException {
+        Equip equipFromDb = equipRepo.findByIdAndStatus(id, EntityStatus.ACTIVE)
+                .orElseThrow(() -> new NotFoundException("Equip not found", HttpStatus.NOT_FOUND));
+        Optional<Employee> employee = equipFromDb.getEmployeeMol() != null && !equipFromDb.getEmployeeMol().equalsIgnoreCase("NONE")
+                ? employeeRepo.findByAccountNameAndStatus(equipFromDb.getEmployeeMol(), EntityStatus.ACTIVE)
+                : Optional.empty();
+        if (employee.isEmpty()) {
+            return EquipDtoV1.createWithAll(equipFromDb);
+        }else{
+            Employee empl = employee.get();
+            return EquipDtoV1.createWithAll(
+                    equipFromDb,
+                    String.join(" ", empl.getLastName(), empl.getFirstName(), empl.getMiddleName())
+            );
+        }
+    }
+
     private void fillEquip(EquipDtoV1 equipDtoV1, Equip equip) {
         equip.setShortName(equipDtoV1.getShortName());
         equip.setFullName(equipDtoV1.getFullName());
@@ -231,6 +252,13 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
         equip.setGroupAccounting(equipDtoV1.isGroupAccounting());
         equip.setParentId(equipDtoV1.getParentId());
         equip.setChildren(equipDtoV1.isChildren());
+        equip.setEmployeeMol(
+                !"NONE".equalsIgnoreCase(equipDtoV1.getEmployeeMol().trim())
+                        && employeeRepo.existsByAccountNameAndStatus(equipDtoV1.getEmployeeMol().trim(), EntityStatus.ACTIVE)
+                        ? equipDtoV1.getEmployeeMol().trim()
+                        : "NONE"
+        );
+        equip.setIpV4(equipDtoV1.getIpV4());
         equip.setArm(
                 equipDtoV1.getArmId() != null && equipDtoV1.getArmId() > 0
                         ? armRepo.findByIdAndStatus(equipDtoV1.getArmId(), EntityStatus.ACTIVE).orElse(null)
@@ -276,7 +304,8 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
 
     @Override
     public Equip findById(Long id) throws MyException {
-        return equipRepo.findByIdAndStatus(id, EntityStatus.ACTIVE).orElseThrow(() -> new NotFoundException("Equip not found", HttpStatus.NOT_FOUND));
+        return equipRepo.findByIdAndStatus(id, EntityStatus.ACTIVE)
+                .orElseThrow(() -> new NotFoundException("Equip not found", HttpStatus.NOT_FOUND));
     }
 
     @Override

@@ -24,4 +24,6 @@ public interface EquipServiceV1 extends CrudServiceV1<Equip, EquipDtoV1> {
 
     EquipParentsDtoV1 getEquipParents();
 
+    EquipDtoV1 findByIdWithMol(Long id) throws MyException;
+
 }

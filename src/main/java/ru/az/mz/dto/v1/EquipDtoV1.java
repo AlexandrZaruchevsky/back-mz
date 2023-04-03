@@ -18,6 +18,9 @@ public class EquipDtoV1 {
     boolean groupAccounting;
     Long parentId;
     boolean children;
+    String employeeMol;
+    String molFio;
+    String ipV4;
     Long armId;
     String armName;
     Long equipTypeId;
@@ -38,6 +41,9 @@ public class EquipDtoV1 {
                 equip.isGroupAccounting(),
                 equip.getParentId(),
                 equip.isChildren(),
+                equip.getEmployeeMol(),
+                equip.getMolFio(),
+                equip.getIpV4(),
                 -1L,
                 null,
                 -1L,
@@ -59,6 +65,9 @@ public class EquipDtoV1 {
                 equip.isGroupAccounting(),
                 equip.getParentId(),
                 equip.isChildren(),
+                equip.getEmployeeMol(),
+                equip.getMolFio(),
+                equip.getIpV4(),
                 -1L,
                 null,
                 equip.getEquipType() != null ? equip.getEquipType().getId() : -1L,
@@ -81,6 +90,9 @@ public class EquipDtoV1 {
                 equip.isGroupAccounting(),
                 equip.getParentId(),
                 equip.isChildren(),
+                equip.getEmployeeMol(),
+                equip.getMolFio(),
+                equip.getIpV4(),
                 -1L,
                 null,
                 -1L,
@@ -102,6 +114,9 @@ public class EquipDtoV1 {
                 equip.isGroupAccounting(),
                 equip.getParentId(),
                 equip.isChildren(),
+                equip.getEmployeeMol(),
+                equip.getMolFio(),
+                equip.getIpV4(),
                 -1L,
                 null,
                 equip.getEquipType() != null ? equip.getEquipType().getId() : -1L,
@@ -123,6 +138,9 @@ public class EquipDtoV1 {
                 equip.isGroupAccounting(),
                 equip.getParentId(),
                 equip.isChildren(),
+                equip.getEmployeeMol(),
+                equip.getMolFio(),
+                equip.getIpV4(),
                 equip.getArm() != null ? equip.getArm().getId() : -1L,
                 equip.getArm() != null ? equip.getArm().getName() : null,
                 equip.getEquipType() != null ? equip.getEquipType().getId() : -1L,
@@ -131,5 +149,31 @@ public class EquipDtoV1 {
                 equip.getEquipModel() != null ? equip.getEquipModel().getName() : null
         );
     }
+
+    public static EquipDtoV1 createWithAll(Equip equip, String molFio) {
+        return new EquipDtoV1(
+                equip.getId(),
+                equip.getShortName(),
+                equip.getFullName(),
+                equip.getSerialNumber(),
+                equip.getInventoryNumber(),
+                equip.getManufacturer(),
+                equip.getDateOfManufacture(),
+                equip.isGroupAccounting(),
+                equip.getParentId(),
+                equip.isChildren(),
+                equip.getEmployeeMol(),
+                molFio,
+                equip.getIpV4(),
+                equip.getArm() != null ? equip.getArm().getId() : -1L,
+                equip.getArm() != null ? equip.getArm().getName() : null,
+                equip.getEquipType() != null ? equip.getEquipType().getId() : -1L,
+                equip.getEquipType() != null ? equip.getEquipType().getName() : null,
+                equip.getEquipModel() != null ? equip.getEquipModel().getId() : -1L,
+                equip.getEquipModel() != null ? equip.getEquipModel().getName() : null
+        );
+    }
+
+
 
 }

@@ -42,7 +42,7 @@ public class EquipRestControllerV1 {
     public EquipDtoV1 findById(
             @PathVariable Long id
     ) throws MyException {
-        return EquipDtoV1.createWithAll(equipServiceV1.findById(id));
+        return equipServiceV1.findByIdWithMol(id);
     }
 
     @GetMapping("{parentId}/children")

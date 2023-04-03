@@ -51,6 +51,12 @@ public class Equip extends BaseEntity{
     private Long parentId;
     @Column(name = "children")
     private boolean children;
+    @Column(name = "employee_mol")
+    private String employeeMol;
+    @Column(name = "mol_fio")
+    private String molFio;
+    @Column(name = "ip_v4")
+    private String ipV4;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "arm_id")
