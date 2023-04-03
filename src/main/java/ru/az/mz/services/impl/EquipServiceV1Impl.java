@@ -233,7 +233,7 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
                 : Optional.empty();
         if (employee.isEmpty()) {
             return EquipDtoV1.createWithAll(equipFromDb);
-        }else{
+        } else {
             Employee empl = employee.get();
             return EquipDtoV1.createWithAll(
                     equipFromDb,
@@ -253,7 +253,7 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
         equip.setParentId(equipDtoV1.getParentId());
         equip.setChildren(equipDtoV1.isChildren());
         equip.setEmployeeMol(
-                !"NONE".equalsIgnoreCase(equipDtoV1.getEmployeeMol().trim())
+                equipDtoV1.getEmployeeMol() != null && !"NONE".equalsIgnoreCase(equipDtoV1.getEmployeeMol().trim())
                         && employeeRepo.existsByAccountNameAndStatus(equipDtoV1.getEmployeeMol().trim(), EntityStatus.ACTIVE)
                         ? equipDtoV1.getEmployeeMol().trim()
                         : "NONE"
