@@ -12,35 +12,35 @@ import java.util.Optional;
 public interface EquipRepo extends PagingAndSortingRepository<Equip, Long> {
 
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatus(EntityStatus status, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildren(EntityStatus status, boolean isChildren, Pageable pageable);
 
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndShortNameContainingOrShortNameIsNull(EntityStatus status, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndShortNameContainingOrShortNameIsNull(EntityStatus status, boolean isChildren, String name, Pageable pageable);
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndInventoryNumberContainingOrInventoryNumberIsNull(EntityStatus status, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndInventoryNumberContainingOrInventoryNumberIsNull(EntityStatus status, boolean isChildren, String name, Pageable pageable);
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndSerialNumberContainingOrSerialNumberIsNull(EntityStatus status, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndSerialNumberContainingOrSerialNumberIsNull(EntityStatus status, boolean isChildren, String name, Pageable pageable);
 
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndArmAndShortNameContainingOrShortNameIsNull(EntityStatus status, Arm arm, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndArmAndShortNameContainingOrShortNameIsNull(EntityStatus status, boolean isChildren, Arm arm, String name, Pageable pageable);
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndArmAndInventoryNumberContainingOrInventoryNumberIsNull(EntityStatus status, Arm arm, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndArmAndInventoryNumberContainingOrInventoryNumberIsNull(EntityStatus status, boolean isChildren, Arm arm, String name, Pageable pageable);
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndArmAndSerialNumberContainingOrSerialNumberIsNull(EntityStatus status, Arm arm, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndArmAndSerialNumberContainingOrSerialNumberIsNull(EntityStatus status, boolean isChildren, Arm arm, String name, Pageable pageable);
 
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndEquipTypeAndShortNameContainingOrShortNameIsNull(EntityStatus status, EquipType equipType, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndEquipTypeAndShortNameContainingOrShortNameIsNull(EntityStatus status, boolean isChildren, EquipType equipType, String name, Pageable pageable);
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndEquipTypeAndInventoryNumberContainingOrInventoryNumberIsNull(EntityStatus status, EquipType equipType, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndEquipTypeAndInventoryNumberContainingOrInventoryNumberIsNull(EntityStatus status, boolean isChildren, EquipType equipType, String name, Pageable pageable);
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndEquipTypeAndSerialNumberContainingOrSerialNumberIsNull(EntityStatus status, EquipType equipType, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndEquipTypeAndSerialNumberContainingOrSerialNumberIsNull(EntityStatus status, boolean isChildren, EquipType equipType, String name, Pageable pageable);
 
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndEquipModelAndShortNameContainingOrShortNameIsNull(EntityStatus status, EquipModel equipModel, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndEquipModelAndShortNameContainingOrShortNameIsNull(EntityStatus status, boolean isChildren, EquipModel equipModel, String name, Pageable pageable);
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndEquipModelAndInventoryNumberContainingOrInventoryNumberIsNull(EntityStatus status, EquipModel equipModel, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndEquipModelAndInventoryNumberContainingOrInventoryNumberIsNull(EntityStatus status, boolean isChildren, EquipModel equipModel, String name, Pageable pageable);
     @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndEquipModelAndSerialNumberContainingOrSerialNumberIsNull(EntityStatus status, EquipModel equipModel, String name, Pageable pageable);
+    Page<Equip> findAllByStatusAndChildrenAndEquipModelAndSerialNumberContainingOrSerialNumberIsNull(EntityStatus status, boolean isChildren, EquipModel equipModel, String name, Pageable pageable);
 
     Page<Equip> findAllByShortNameStartingWithAndStatus(String name, EntityStatus status, Pageable pageable);
 
@@ -48,7 +48,7 @@ public interface EquipRepo extends PagingAndSortingRepository<Equip, Long> {
 
     Page<Equip> findAllBySerialNumberStartingWithAndStatus(String serialNumber, EntityStatus status, Pageable pageable);
 
-    List<Equip> findAllByStatus(EntityStatus status);
+    List<Equip> findAllByStatusAndChildren(EntityStatus status, boolean isChildren);
 
     List<Equip> findAll();
 
@@ -56,5 +56,10 @@ public interface EquipRepo extends PagingAndSortingRepository<Equip, Long> {
     Optional<Equip> findByIdAndStatus(Long id, EntityStatus status);
 
     long countByStatus(EntityStatus status);
+
+    @EntityGraph("Equip.withEquipType")
+    List<Equip> findAllByChildrenAndParentIdAndStatus(boolean isChildren, Long id, EntityStatus status);
+    @EntityGraph("Equip.withAll")
+    Optional<Equip> findByIdAndChildrenAndStatus(Long id, boolean isChildren, EntityStatus status);
 
 }

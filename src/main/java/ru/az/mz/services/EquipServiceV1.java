@@ -19,6 +19,9 @@ public interface EquipServiceV1 extends CrudServiceV1<Equip, EquipDtoV1> {
     Page<Equip> findAllBySerialNumber(String serialNumber, Pageable pageable);
     List<Equip> findAllByStatus(EntityStatus status);
 
+    List<EquipDtoV1> findAllChildren(Long parentId);
+    EquipDtoV1 findChildById(Long id) throws MyException;
+
     EquipParentsDtoV1 getEquipParents();
 
 }

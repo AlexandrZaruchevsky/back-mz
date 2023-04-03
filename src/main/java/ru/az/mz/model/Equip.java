@@ -45,6 +45,12 @@ public class Equip extends BaseEntity{
     private String manufacturer;
     @Column(name = "date_of_manufacture")
     private LocalDate dateOfManufacture;
+    @Column(name = "group_accounting")
+    private boolean groupAccounting;
+    @Column(name = "parent_id")
+    private Long parentId;
+    @Column(name = "children")
+    private boolean children;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "arm_id")

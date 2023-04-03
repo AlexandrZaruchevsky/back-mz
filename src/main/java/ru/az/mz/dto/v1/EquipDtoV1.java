@@ -1,9 +1,7 @@
 package ru.az.mz.dto.v1;
 
 import lombok.Value;
-import org.springframework.http.HttpStatus;
 import ru.az.mz.model.Equip;
-import ru.az.mz.services.MyException;
 
 import java.time.LocalDate;
 
@@ -17,6 +15,9 @@ public class EquipDtoV1 {
     String inventoryNumber;
     String manufacturer;
     LocalDate dateOfManufacture;
+    boolean groupAccounting;
+    Long parentId;
+    boolean children;
     Long armId;
     String armName;
     Long equipTypeId;
@@ -34,6 +35,9 @@ public class EquipDtoV1 {
                 equip.getInventoryNumber(),
                 equip.getManufacturer(),
                 equip.getDateOfManufacture(),
+                equip.isGroupAccounting(),
+                equip.getParentId(),
+                equip.isChildren(),
                 -1L,
                 null,
                 -1L,
@@ -52,6 +56,9 @@ public class EquipDtoV1 {
                 equip.getInventoryNumber(),
                 equip.getManufacturer(),
                 equip.getDateOfManufacture(),
+                equip.isGroupAccounting(),
+                equip.getParentId(),
+                equip.isChildren(),
                 -1L,
                 null,
                 equip.getEquipType() != null ? equip.getEquipType().getId() : -1L,
@@ -71,6 +78,9 @@ public class EquipDtoV1 {
                 equip.getInventoryNumber(),
                 equip.getManufacturer(),
                 equip.getDateOfManufacture(),
+                equip.isGroupAccounting(),
+                equip.getParentId(),
+                equip.isChildren(),
                 -1L,
                 null,
                 -1L,
@@ -89,6 +99,9 @@ public class EquipDtoV1 {
                 equip.getInventoryNumber(),
                 equip.getManufacturer(),
                 equip.getDateOfManufacture(),
+                equip.isGroupAccounting(),
+                equip.getParentId(),
+                equip.isChildren(),
                 -1L,
                 null,
                 equip.getEquipType() != null ? equip.getEquipType().getId() : -1L,
@@ -107,6 +120,9 @@ public class EquipDtoV1 {
                 equip.getInventoryNumber(),
                 equip.getManufacturer(),
                 equip.getDateOfManufacture(),
+                equip.isGroupAccounting(),
+                equip.getParentId(),
+                equip.isChildren(),
                 equip.getArm() != null ? equip.getArm().getId() : -1L,
                 equip.getArm() != null ? equip.getArm().getName() : null,
                 equip.getEquipType() != null ? equip.getEquipType().getId() : -1L,

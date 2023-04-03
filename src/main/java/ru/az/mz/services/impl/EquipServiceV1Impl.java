@@ -59,8 +59,9 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
     @Transactional
     public Page<EquipDtoV1> findAll(PageRequestEquipDtoV1 pageRequest) throws MyException {
         if (pageRequest == null || "".equalsIgnoreCase(pageRequest.getSortBy().trim())) {
-            return equipRepo.findAllByStatus(
+            return equipRepo.findAllByStatusAndChildren(
                     EntityStatus.ACTIVE,
+                    false,
                     setupParameters.getPageRequestDefault().withSort(Sort.by("shortName"))
             ).map(EquipDtoV1::createWithEquipType);
         }
@@ -81,14 +82,16 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
     private Page<EquipDtoV1> getEquipBySerialNumber(PageRequestEquipDtoV1 pageRequest, PageRequest request) throws NotFoundException {
         if (pageRequest.getEquipModelId() <= 0) {
             if (pageRequest.getEquipTypeId() <= 0) {
-                return equipRepo.findAllByStatusAndSerialNumberContainingOrSerialNumberIsNull(
+                return equipRepo.findAllByStatusAndChildrenAndSerialNumberContainingOrSerialNumberIsNull(
                         EntityStatus.ACTIVE,
+                        false,
                         pageRequest.getSearch(),
                         request
                 ).map(EquipDtoV1::createWithEquipType);
             } else {
-                return equipRepo.findAllByStatusAndEquipTypeAndSerialNumberContainingOrSerialNumberIsNull(
+                return equipRepo.findAllByStatusAndChildrenAndEquipTypeAndSerialNumberContainingOrSerialNumberIsNull(
                         EntityStatus.ACTIVE,
+                        false,
                         equipTypeRepo.findByIdAndStatus(pageRequest.getEquipTypeId(), EntityStatus.ACTIVE)
                                 .orElseThrow(() -> new NotFoundException("Equip Type not found", HttpStatus.NOT_FOUND)),
                         pageRequest.getSearch(),
@@ -96,8 +99,9 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
                 ).map(EquipDtoV1::createWithEquipType);
             }
         } else {
-            return equipRepo.findAllByStatusAndEquipModelAndSerialNumberContainingOrSerialNumberIsNull(
+            return equipRepo.findAllByStatusAndChildrenAndEquipModelAndSerialNumberContainingOrSerialNumberIsNull(
                     EntityStatus.ACTIVE,
+                    false,
                     equipModelRepo.findByIdAndStatus(pageRequest.getEquipModelId(), EntityStatus.ACTIVE)
                             .orElseThrow(() -> new NotFoundException("Equip Model not found", HttpStatus.NOT_FOUND)),
                     pageRequest.getSearch(),
@@ -109,14 +113,16 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
     private Page<EquipDtoV1> getEquipByInventoryNumber(PageRequestEquipDtoV1 pageRequest, PageRequest request) throws NotFoundException {
         if (pageRequest.getEquipModelId() <= 0) {
             if (pageRequest.getEquipTypeId() <= 0) {
-                return equipRepo.findAllByStatusAndInventoryNumberContainingOrInventoryNumberIsNull(
+                return equipRepo.findAllByStatusAndChildrenAndInventoryNumberContainingOrInventoryNumberIsNull(
                         EntityStatus.ACTIVE,
+                        false,
                         pageRequest.getSearch(),
                         request
                 ).map(EquipDtoV1::createWithEquipType);
             } else {
-                return equipRepo.findAllByStatusAndEquipTypeAndInventoryNumberContainingOrInventoryNumberIsNull(
+                return equipRepo.findAllByStatusAndChildrenAndEquipTypeAndInventoryNumberContainingOrInventoryNumberIsNull(
                         EntityStatus.ACTIVE,
+                        false,
                         equipTypeRepo.findByIdAndStatus(pageRequest.getEquipTypeId(), EntityStatus.ACTIVE)
                                 .orElseThrow(() -> new NotFoundException("Equip Type not found", HttpStatus.NOT_FOUND)),
                         pageRequest.getSearch(),
@@ -124,8 +130,9 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
                 ).map(EquipDtoV1::createWithEquipType);
             }
         } else {
-            return equipRepo.findAllByStatusAndEquipModelAndInventoryNumberContainingOrInventoryNumberIsNull(
+            return equipRepo.findAllByStatusAndChildrenAndEquipModelAndInventoryNumberContainingOrInventoryNumberIsNull(
                     EntityStatus.ACTIVE,
+                    false,
                     equipModelRepo.findByIdAndStatus(pageRequest.getEquipModelId(), EntityStatus.ACTIVE)
                             .orElseThrow(() -> new NotFoundException("Equip Model not found", HttpStatus.NOT_FOUND)),
                     pageRequest.getSearch(),
@@ -137,14 +144,16 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
     private Page<EquipDtoV1> getEquipByShortName(PageRequestEquipDtoV1 pageRequest, PageRequest request) throws NotFoundException {
         if (pageRequest.getEquipModelId() <= 0) {
             if (pageRequest.getEquipTypeId() <= 0) {
-                return equipRepo.findAllByStatusAndShortNameContainingOrShortNameIsNull(
+                return equipRepo.findAllByStatusAndChildrenAndShortNameContainingOrShortNameIsNull(
                         EntityStatus.ACTIVE,
+                        false,
                         pageRequest.getSearch(),
                         request
                 ).map(EquipDtoV1::createWithEquipType);
             } else {
-                return equipRepo.findAllByStatusAndEquipTypeAndShortNameContainingOrShortNameIsNull(
+                return equipRepo.findAllByStatusAndChildrenAndEquipTypeAndShortNameContainingOrShortNameIsNull(
                         EntityStatus.ACTIVE,
+                        false,
                         equipTypeRepo.findByIdAndStatus(pageRequest.getEquipTypeId(), EntityStatus.ACTIVE)
                                 .orElseThrow(() -> new NotFoundException("Equip Type not found", HttpStatus.NOT_FOUND)),
                         pageRequest.getSearch(),
@@ -152,8 +161,9 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
                 ).map(EquipDtoV1::createWithEquipType);
             }
         } else {
-            return equipRepo.findAllByStatusAndEquipModelAndShortNameContainingOrShortNameIsNull(
+            return equipRepo.findAllByStatusAndChildrenAndEquipModelAndShortNameContainingOrShortNameIsNull(
                     EntityStatus.ACTIVE,
+                    false,
                     equipModelRepo.findByIdAndStatus(pageRequest.getEquipModelId(), EntityStatus.ACTIVE)
                             .orElseThrow(() -> new NotFoundException("Equip Model not found", HttpStatus.NOT_FOUND)),
                     pageRequest.getSearch(),
@@ -174,7 +184,30 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
 
     @Override
     public List<Equip> findAllByStatus(EntityStatus status) {
-        return equipRepo.findAllByStatus(status);
+        return equipRepo.findAllByStatusAndChildren(status, true);
+    }
+
+    @Override
+    public List<EquipDtoV1> findAllChildren(Long parentId) {
+        return equipRepo
+                .findAllByChildrenAndParentIdAndStatus(
+                        true,
+                        parentId,
+                        EntityStatus.ACTIVE
+                ).stream()
+                .map(EquipDtoV1::createWithEquipType)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public EquipDtoV1 findChildById(Long id) throws MyException{
+        return EquipDtoV1.createWithAll(
+                equipRepo.findByIdAndChildrenAndStatus(
+                        id,
+                        true,
+                        EntityStatus.ACTIVE
+                ).orElseThrow(()-> new NotFoundException("Equip child not found", HttpStatus.NOT_FOUND))
+        );
     }
 
     @Override
@@ -195,6 +228,9 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
         equip.setInventoryNumber(equipDtoV1.getInventoryNumber());
         equip.setManufacturer(equipDtoV1.getManufacturer());
         equip.setDateOfManufacture(equipDtoV1.getDateOfManufacture());
+        equip.setGroupAccounting(equipDtoV1.isGroupAccounting());
+        equip.setParentId(equipDtoV1.getParentId());
+        equip.setChildren(equipDtoV1.isChildren());
         equip.setArm(
                 equipDtoV1.getArmId() != null && equipDtoV1.getArmId() > 0
                         ? armRepo.findByIdAndStatus(equipDtoV1.getArmId(), EntityStatus.ACTIVE).orElse(null)
@@ -245,7 +281,7 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
 
     @Override
     public Page<Equip> findAll(Pageable pageable) {
-        return equipRepo.findAllByStatus(EntityStatus.ACTIVE, pageable);
+        return equipRepo.findAllByStatusAndChildren(EntityStatus.ACTIVE, true, pageable);
     }
 
     @Override
