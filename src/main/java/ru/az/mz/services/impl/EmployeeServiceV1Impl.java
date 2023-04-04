@@ -1,10 +1,11 @@
 package ru.az.mz.services.impl;
 
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.az.mz.dto.v1.EmployeeDtoV1;
@@ -15,7 +16,10 @@ import ru.az.mz.services.*;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
@@ -77,8 +81,49 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
     }
 
     @Override
+    public List<EmployeeDtoV1> findAllByFioForChoice(String fio) {
+        Map<String, String> fio1 = getFio(fio);
+        return employeeRepo.findAllByLastNameStartingWithAndFirstNameStartingWithAndMiddleNameStartingWithAndStatus(
+                fio1.get("lastName"),
+                fio1.get("firstName"),
+                fio1.get("middleName"),
+                EntityStatus.ACTIVE,
+                PageRequest.of(0, 50, Sort.by("lastName", "firstName", "middleName"))
+        ).map(EmployeeDtoV1::createWithPositionAndDepartment)
+                .stream()
+                .collect(Collectors.toList());
+    }
+
+    public Map<String, String> getFio(String fio) {
+        HashMap<String, String> mapFio = new HashMap<>();
+        String[] split = fio.trim().split("\\s+");
+        switch (split.length) {
+            case 0:
+                mapFio.put("lastName", "");
+                mapFio.put("firstName", "");
+                mapFio.put("middleName", "");
+                break;
+            case 1:
+                mapFio.put("lastName", split[0]);
+                mapFio.put("firstName", "");
+                mapFio.put("middleName", "");
+                break;
+            case 2:
+                mapFio.put("lastName", split[0]);
+                mapFio.put("firstName", split[1]);
+                mapFio.put("middleName", "");
+                break;
+            default:
+                mapFio.put("lastName", split[0]);
+                mapFio.put("firstName", split[1]);
+                mapFio.put("middleName", split[2]);
+        }
+        return mapFio;
+    }
+
+    @Override
     @Transactional
-    @CacheEvict(cacheNames = {"employees","employeeList"}, allEntries = true)
+    @CacheEvict(cacheNames = {"employees", "employeeList"}, allEntries = true)
     public Employee add(EmployeeDtoV1 employeeDtoV1) throws MyException {
         Employee employee = new Employee();
         fillEmployee(employeeDtoV1, employee);
@@ -116,7 +161,7 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"employees","employeeList"}, allEntries = true)
+    @CacheEvict(cacheNames = {"employees", "employeeList"}, allEntries = true)
     public Employee update(EmployeeDtoV1 employeeDtoV1) throws MyException {
         Employee employee = findById(employeeDtoV1.getId());
         fillEmployee(employeeDtoV1, employee);
@@ -124,7 +169,7 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"employees","employeeList"}, allEntries = true)
+    @CacheEvict(cacheNames = {"employees", "employeeList"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         Employee employee = findById(id);
         employee.setStatus(EntityStatus.DELETED);

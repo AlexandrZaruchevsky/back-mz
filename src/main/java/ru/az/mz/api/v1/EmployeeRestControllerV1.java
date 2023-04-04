@@ -12,6 +12,9 @@ import ru.az.mz.dto.v1.PageRequestDtoV1;
 import ru.az.mz.services.EmployeeServiceV1;
 import ru.az.mz.services.MyException;
 
+import java.util.Collections;
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/employees")
 public class EmployeeRestControllerV1 {
@@ -50,6 +53,14 @@ public class EmployeeRestControllerV1 {
             return employeeServiceV1.findAll(pageRequest)
                     .map(EmployeeDtoV1::createWithPositionAndDepartment);
         }
+    }
+
+    @GetMapping("list-choice")
+    @PreAuthorize("hasAnyAuthority('user:read','user:write')")
+    public List<EmployeeDtoV1> findAllByName(
+            @RequestParam(defaultValue = "", required = false) String fio
+    ){
+        return employeeServiceV1.findAllByFioForChoice(fio);
     }
 
     @GetMapping("{id}")

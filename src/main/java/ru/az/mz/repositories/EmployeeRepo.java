@@ -7,6 +7,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import ru.az.mz.model.Employee;
 import ru.az.mz.model.EntityStatus;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeRepo extends PagingAndSortingRepository<Employee, Long> {
@@ -24,6 +25,14 @@ public interface EmployeeRepo extends PagingAndSortingRepository<Employee, Long>
             String middleName,
             EntityStatus status,
             Pageable pageable
+    );
+
+    @EntityGraph("Employee.withDepartmentAndPosition")
+    List<Employee> findAllByLastNameContainingAndFirstNameContainingAndMiddleNameContainingAndStatus(
+            String lastName,
+            String firstName,
+            String middleName,
+            EntityStatus status
     );
 
     @EntityGraph("Employee.withDepartmentAndPosition")
