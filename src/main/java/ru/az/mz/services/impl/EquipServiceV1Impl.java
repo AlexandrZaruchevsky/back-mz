@@ -259,11 +259,11 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
                         : "NONE"
         );
         equip.setIpV4(equipDtoV1.getIpV4());
-        equip.setArm(
-                equipDtoV1.getArmId() != null && equipDtoV1.getArmId() > 0
-                        ? armRepo.findByIdAndStatus(equipDtoV1.getArmId(), EntityStatus.ACTIVE).orElse(null)
-                        : null
-        );
+//        equip.setArm(
+//                equipDtoV1.getArmId() != null && equipDtoV1.getArmId() > 0
+//                        ? armRepo.findByIdAndStatus(equipDtoV1.getArmId(), EntityStatus.ACTIVE).orElse(null)
+//                        : null
+//        );
         equip.setEquipType(
                 equipDtoV1.getEquipTypeId() != null && equipDtoV1.getEquipTypeId() > 0
                         ? equipTypeRepo.findByIdAndStatus(equipDtoV1.getEquipTypeId(), EntityStatus.ACTIVE).orElse(null)

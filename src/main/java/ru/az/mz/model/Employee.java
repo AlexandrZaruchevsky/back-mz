@@ -77,7 +77,7 @@ public class Employee extends BaseEntity {
     @JoinColumn(name = "point_of_presence_id")
     private PointOfPresence pointOfPresence;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "employee")
-    private List<Arm> arms;
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "employee")
+//    private List<Arm> arms;
 
 }

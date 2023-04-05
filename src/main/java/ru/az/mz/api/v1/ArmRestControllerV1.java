@@ -31,7 +31,7 @@ public class ArmRestControllerV1 {
         PageRequest pageRequest = pageRequestDtoV1 == null
                 ? setupParameters.getPageRequestDefault()
                 : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize());
-        return armServiceV1.findAll(pageRequest).map(ArmDtoV1::createWithEmployee);
+        return armServiceV1.findAll(pageRequest).map(ArmDtoV1::create);
     }
 
     @GetMapping("{id}")

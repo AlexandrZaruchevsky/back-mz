@@ -52,11 +52,11 @@ public class ArmServiceV1Impl implements ArmServiceV1 {
                         ? pointOfPresenceRepo.findByIdAndStatus(armDtoV1.getPopId(), EntityStatus.ACTIVE).orElse(null)
                         : null
                 );
-        arm.setEmployee(
-                armDtoV1.getBoss() != null
-                        ? employeeRepo.findByIdAndStatus(armDtoV1.getBoss().getId(), EntityStatus.ACTIVE).orElse(null)
-                        : null
-        );
+//        arm.setEmployee(
+//                armDtoV1.getBoss() != null
+//                        ? employeeRepo.findByIdAndStatus(armDtoV1.getBoss().getId(), EntityStatus.ACTIVE).orElse(null)
+//                        : null
+//        );
         arm.setSaveByUser(securityService.getUsername());
     }
 

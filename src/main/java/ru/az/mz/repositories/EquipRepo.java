@@ -21,12 +21,12 @@ public interface EquipRepo extends PagingAndSortingRepository<Equip, Long> {
     @EntityGraph("Equip.withEquipType")
     Page<Equip> findAllByStatusAndChildrenAndSerialNumberContainingOrSerialNumberIsNull(EntityStatus status, boolean isChildren, String name, Pageable pageable);
 
-    @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndChildrenAndArmAndShortNameContainingOrShortNameIsNull(EntityStatus status, boolean isChildren, Arm arm, String name, Pageable pageable);
-    @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndChildrenAndArmAndInventoryNumberContainingOrInventoryNumberIsNull(EntityStatus status, boolean isChildren, Arm arm, String name, Pageable pageable);
-    @EntityGraph("Equip.withEquipType")
-    Page<Equip> findAllByStatusAndChildrenAndArmAndSerialNumberContainingOrSerialNumberIsNull(EntityStatus status, boolean isChildren, Arm arm, String name, Pageable pageable);
+//    @EntityGraph("Equip.withEquipType")
+//    Page<Equip> findAllByStatusAndChildrenAndArmAndShortNameContainingOrShortNameIsNull(EntityStatus status, boolean isChildren, Arm arm, String name, Pageable pageable);
+//    @EntityGraph("Equip.withEquipType")
+//    Page<Equip> findAllByStatusAndChildrenAndArmAndInventoryNumberContainingOrInventoryNumberIsNull(EntityStatus status, boolean isChildren, Arm arm, String name, Pageable pageable);
+//    @EntityGraph("Equip.withEquipType")
+//    Page<Equip> findAllByStatusAndChildrenAndArmAndSerialNumberContainingOrSerialNumberIsNull(EntityStatus status, boolean isChildren, Arm arm, String name, Pageable pageable);
 
     @EntityGraph("Equip.withEquipType")
     Page<Equip> findAllByStatusAndChildrenAndEquipTypeAndShortNameContainingOrShortNameIsNull(EntityStatus status, boolean isChildren, EquipType equipType, String name, Pageable pageable);

@@ -58,9 +58,9 @@ public class Equip extends BaseEntity{
     @Column(name = "ip_v4")
     private String ipV4;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "arm_id")
-    private Arm arm;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "arm_id")
+//    private Arm arm;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "equip_type_id")
@@ -69,5 +69,8 @@ public class Equip extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "equip_model_id")
     private EquipModel equipModel;
+
+    @OneToOne(mappedBy = "equip")
+    private ArmDetail armDetail;
 
 }
