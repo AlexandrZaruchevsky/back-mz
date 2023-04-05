@@ -37,17 +37,9 @@ public class Arm extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "point_of_presence_id")
     private PointOfPresence pointOfPresence;
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "employee_id")
-//    private Employee employee;
-
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "arm")
-//    private List<Equip> equips;
 
     @OneToMany(mappedBy = "arm", fetch = FetchType.LAZY)
     private List<ArmDetail> armDetails;
