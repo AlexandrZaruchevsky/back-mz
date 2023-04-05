@@ -18,4 +18,7 @@ public interface PointOfPresenceServiceV1 extends CrudServiceV1<PointOfPresence,
     Page<PointOfPresence> findAll(PageRequestDtoV1 pageRequest);
 
     List<PointOfPresence> findAllByOrgId(Long id);
+
+    List<PointOfPresenceDtoV1> findAllByShortNameForChoice(String shortName);
+
 }

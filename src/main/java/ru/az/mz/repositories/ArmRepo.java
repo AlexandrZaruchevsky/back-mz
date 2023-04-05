@@ -12,11 +12,14 @@ import java.util.Optional;
 
 public interface ArmRepo extends PagingAndSortingRepository<Arm, Long> {
 
-    @EntityGraph("Arm.withEmployee")
+    @EntityGraph("Arm.withPointOfPresence")
     Page<Arm> findAllByStatus(EntityStatus status, Pageable pageable);
 
-    @EntityGraph("Arm.withEmployee")
+    @EntityGraph("Arm.withPointOfPresence")
     Page<Arm> findAllByNameStartingWithAndStatus(String name, EntityStatus status, Pageable pageable);
+
+    @EntityGraph("Arm.withPointOfPresence")
+    Page<Arm> findAllByNameContainingAndStatus(String name, EntityStatus status, Pageable pageable);
 
     @EntityGraph("Arm.withAll")
     Optional<Arm> findByIdAndStatus(Long id, EntityStatus status);

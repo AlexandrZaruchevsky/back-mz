@@ -19,10 +19,6 @@ import java.util.List;
                 name = "Arm.withPointOfPresence",
                 attributeNodes = @NamedAttributeNode("pointOfPresence")
         ),
-//        @NamedEntityGraph(
-//                name = "Arm.withEmployee",
-//                attributeNodes = @NamedAttributeNode("employee")
-//        ),
         @NamedEntityGraph(
                 name = "Arm.withAll",
                 includeAllAttributes = true

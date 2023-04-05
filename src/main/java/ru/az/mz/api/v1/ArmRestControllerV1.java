@@ -28,10 +28,11 @@ public class ArmRestControllerV1 {
     public Page<ArmDtoV1> findAll(
             PageRequestDtoV1 pageRequestDtoV1
     ) {
-        PageRequest pageRequest = pageRequestDtoV1 == null
-                ? setupParameters.getPageRequestDefault()
-                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize());
-        return armServiceV1.findAll(pageRequest).map(ArmDtoV1::create);
+        return armServiceV1.findAll(pageRequestDtoV1);
+//        PageRequest pageRequest = pageRequestDtoV1 == null
+//                ? setupParameters.getPageRequestDefault()
+//                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize());
+//        return armServiceV1.findAll(pageRequest).map(ArmDtoV1::createWithPop);
     }
 
     @GetMapping("{id}")

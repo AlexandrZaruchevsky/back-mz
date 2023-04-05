@@ -1,6 +1,7 @@
 package ru.az.mz.services.impl;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -78,6 +79,19 @@ public class PointOfPresenceServiceV1Impl implements PointOfPresenceServiceV1 {
         return list;
     }
 
+    @Override
+    @Cacheable(cacheNames = {"pop-list-choice"}, key="#shortName")
+    public List<PointOfPresenceDtoV1> findAllByShortNameForChoice(String shortName) {
+        List<PointOfPresenceDtoV1> shortName1 = pointOfPresenceRepo.findAllByShortNameContainingAndStatus(
+                shortName,
+                EntityStatus.ACTIVE,
+                PageRequest.of(0, 50, Sort.by("shortName"))
+        ).map(PointOfPresenceDtoV1::createWithOrganization)
+                .stream()
+                .collect(Collectors.toList());
+        return shortName1;
+    }
+
     private void fillPointOfPresence(PointOfPresenceDtoV1 pointOfPresenceDtoV1, PointOfPresence pointOfPresence) throws MyException {
         pointOfPresence.setShortName(pointOfPresenceDtoV1.getShortName());
         pointOfPresence.setFullName(pointOfPresenceDtoV1.getFullName());
@@ -101,7 +115,7 @@ public class PointOfPresenceServiceV1Impl implements PointOfPresenceServiceV1 {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"organizationWithDependencies"}, allEntries = true)
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "pop-list-choice"}, allEntries = true)
     public PointOfPresence add(PointOfPresenceDtoV1 pointOfPresenceDtoV1) throws MyException {
         PointOfPresence pointOfPresence = new PointOfPresence();
         fillPointOfPresence(pointOfPresenceDtoV1, pointOfPresence);
@@ -110,7 +124,7 @@ public class PointOfPresenceServiceV1Impl implements PointOfPresenceServiceV1 {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"organizationWithDependencies"}, allEntries = true)
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "pop-list-choice"}, allEntries = true)
     public PointOfPresence update(PointOfPresenceDtoV1 pointOfPresenceDtoV1) throws MyException {
         PointOfPresence pointOfPresence = findById(pointOfPresenceDtoV1.getId());
         fillPointOfPresence(pointOfPresenceDtoV1, pointOfPresence);
@@ -118,7 +132,7 @@ public class PointOfPresenceServiceV1Impl implements PointOfPresenceServiceV1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"organizationWithDependencies"}, allEntries = true)
+    @CacheEvict(cacheNames = {"organizationWithDependencies", "pop-list-choice"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         PointOfPresence pointOfPresence = findById(id);
         pointOfPresence.setStatus(EntityStatus.DELETED);

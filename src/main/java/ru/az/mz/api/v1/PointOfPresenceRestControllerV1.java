@@ -61,6 +61,13 @@ public class PointOfPresenceRestControllerV1 {
                     .collect(Collectors.toList());
     }
 
+    @GetMapping("list-choice")
+    @PreAuthorize("hasAnyAuthority('user:read','user:write')")
+    public List<PointOfPresenceDtoV1> findAllByShortName(
+            @RequestParam(defaultValue = "", required = false) String name
+    ){
+        return pointOfPresenceServiceV1.findAllByShortNameForChoice(name);
+    }
 
     @PostMapping
     @PreAuthorize("hasAuthority('user:write')")

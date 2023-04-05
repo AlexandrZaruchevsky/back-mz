@@ -1,11 +1,16 @@
 package ru.az.mz.services.impl;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.az.mz.config.SetupParameters;
 import ru.az.mz.dto.v1.ArmDtoV1;
+import ru.az.mz.dto.v1.PageRequestDtoV1;
 import ru.az.mz.model.Arm;
 import ru.az.mz.model.EntityStatus;
 import ru.az.mz.repositories.ArmRepo;
@@ -18,6 +23,7 @@ import ru.az.mz.services.SecurityService;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -27,21 +33,48 @@ public class ArmServiceV1Impl implements ArmServiceV1 {
     private final PointOfPresenceRepo pointOfPresenceRepo;
     private final EmployeeRepo employeeRepo;
     private final SecurityService securityService;
+    private final SetupParameters setupParameters;
 
     public ArmServiceV1Impl(
             ArmRepo armRepo,
             PointOfPresenceRepo pointOfPresenceRepo,
             EmployeeRepo employeeRepo,
-            SecurityService securityService) {
+            SecurityService securityService,
+            SetupParameters setupParameters
+    ) {
         this.armRepo = armRepo;
         this.pointOfPresenceRepo = pointOfPresenceRepo;
         this.employeeRepo = employeeRepo;
         this.securityService = securityService;
+        this.setupParameters = setupParameters;
     }
 
     @Override
     public Page<Arm> findByName(String name, Pageable pageable) {
         return armRepo.findAllByNameStartingWithAndStatus(name, EntityStatus.ACTIVE, pageable);
+    }
+
+    @Override
+    @Cacheable(
+            cacheNames = {"armPage"},
+            key = "{#pageRequest.pageCurrent, #pageRequest.pageSize, #pageRequest.sortBy, #pageRequest.search}"
+    )
+    public Page<ArmDtoV1> findAll(PageRequestDtoV1 pageRequest) {
+        PageRequest request;
+        Sort sort = Sort.by("name");
+        if (pageRequest == null) {
+            request = setupParameters.getPageRequestDefault().withSort(sort);
+            return armRepo.findAllByStatus(EntityStatus.ACTIVE, request)
+                    .map(ArmDtoV1::createWithPop);
+        }
+        request = PageRequest.of(pageRequest.getPageCurrent(), pageRequest.getPageSize(), sort);
+        return armRepo.findAllByNameContainingAndStatus(pageRequest.getSearch(), EntityStatus.ACTIVE, request)
+                .map(ArmDtoV1::createWithPop);
+    }
+
+    @Override
+    public List<ArmDtoV1> findAllByNameForChoice(String name) {
+        return Collections.emptyList();
     }
 
     private void fillArm(ArmDtoV1 armDtoV1, Arm arm) {
@@ -51,18 +84,16 @@ public class ArmServiceV1Impl implements ArmServiceV1 {
                 armDtoV1.getPopId() != null && armDtoV1.getPopId() > 0
                         ? pointOfPresenceRepo.findByIdAndStatus(armDtoV1.getPopId(), EntityStatus.ACTIVE).orElse(null)
                         : null
-                );
-//        arm.setEmployee(
-//                armDtoV1.getBoss() != null
-//                        ? employeeRepo.findByIdAndStatus(armDtoV1.getBoss().getId(), EntityStatus.ACTIVE).orElse(null)
-//                        : null
-//        );
+        );
+        arm.setDescription(armDtoV1.getDescription());
+        arm.setMol(armDtoV1.getMol());
+        arm.setMolFio(armDtoV1.getMolFio());
         arm.setSaveByUser(securityService.getUsername());
     }
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"equipParents"}, allEntries = true)
+    @CacheEvict(cacheNames = {"equipParents", "armPage"}, allEntries = true)
     public Arm add(ArmDtoV1 armDtoV1) throws MyException {
         Arm arm = new Arm();
         fillArm(armDtoV1, arm);
@@ -71,7 +102,7 @@ public class ArmServiceV1Impl implements ArmServiceV1 {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"equipParents"}, allEntries = true)
+    @CacheEvict(cacheNames = {"equipParents", "armPage"}, allEntries = true)
     public Arm update(ArmDtoV1 armDtoV1) throws MyException {
         Arm arm = armRepo.findByIdAndStatus(armDtoV1.getId(), EntityStatus.ACTIVE)
                 .orElseThrow(() -> new NotFoundException("Arm not found", HttpStatus.NOT_FOUND));
@@ -81,7 +112,7 @@ public class ArmServiceV1Impl implements ArmServiceV1 {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"equipParents"}, allEntries = true)
+    @CacheEvict(cacheNames = {"equipParents", "armPage"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         Arm arm = findById(id);
         arm.setStatus(EntityStatus.DELETED);
