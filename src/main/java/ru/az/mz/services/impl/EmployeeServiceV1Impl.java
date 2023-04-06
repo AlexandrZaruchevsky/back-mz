@@ -88,7 +88,7 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
                 fio1.get("firstName"),
                 fio1.get("middleName"),
                 EntityStatus.ACTIVE,
-                PageRequest.of(0, 50, Sort.by("lastName", "firstName", "middleName"))
+                PageRequest.of(0, 10, Sort.by("lastName", "firstName", "middleName"))
         ).map(EmployeeDtoV1::createWithPositionAndDepartment)
                 .stream()
                 .collect(Collectors.toList());

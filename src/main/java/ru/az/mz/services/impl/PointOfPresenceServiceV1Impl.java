@@ -82,14 +82,13 @@ public class PointOfPresenceServiceV1Impl implements PointOfPresenceServiceV1 {
     @Override
     @Cacheable(cacheNames = {"pop-list-choice"}, key="#shortName")
     public List<PointOfPresenceDtoV1> findAllByShortNameForChoice(String shortName) {
-        List<PointOfPresenceDtoV1> shortName1 = pointOfPresenceRepo.findAllByShortNameContainingAndStatus(
+        return pointOfPresenceRepo.findAllByShortNameContainingAndStatus(
                 shortName,
                 EntityStatus.ACTIVE,
-                PageRequest.of(0, 50, Sort.by("shortName"))
+                PageRequest.of(0, 10, Sort.by("shortName"))
         ).map(PointOfPresenceDtoV1::createWithOrganization)
                 .stream()
                 .collect(Collectors.toList());
-        return shortName1;
     }
 
     private void fillPointOfPresence(PointOfPresenceDtoV1 pointOfPresenceDtoV1, PointOfPresence pointOfPresence) throws MyException {
