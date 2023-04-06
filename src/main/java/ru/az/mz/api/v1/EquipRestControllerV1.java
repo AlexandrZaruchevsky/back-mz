@@ -37,6 +37,14 @@ public class EquipRestControllerV1 {
         return equipServiceV1.findAll(pageRequestDtoV1);
     }
 
+    @GetMapping("list-choice")
+    @PreAuthorize("hasAnyAuthority('user:read','user:write')")
+    public List<EquipDtoV1> findAllByNameForChoice(
+            @RequestParam(defaultValue = "", required = false) String name
+    ){
+        return equipServiceV1.findAllByNameForChoice(name);
+    }
+
     @GetMapping("{id}")
     @PreAuthorize("hasAnyAuthority('user:read','user:write')")
     public EquipDtoV1 findById(

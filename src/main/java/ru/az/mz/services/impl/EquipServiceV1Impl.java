@@ -1,5 +1,6 @@
 package ru.az.mz.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -242,6 +243,17 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
         }
     }
 
+    @Override
+    @Cacheable(cacheNames = {"choice-arm-list"}, key = "#name")
+    public List<EquipDtoV1> findAllByNameForChoice(String name) {
+        return equipRepo.findAllByStatusAndShortNameContaining(
+                EntityStatus.ACTIVE,
+                name,
+                PageRequest.of(0,50,Sort.by("shortName"))
+        ).map(EquipDtoV1::createWithEquipType).stream()
+                .collect(Collectors.toList());
+    }
+
     private void fillEquip(EquipDtoV1 equipDtoV1, Equip equip) {
         equip.setShortName(equipDtoV1.getShortName());
         equip.setFullName(equipDtoV1.getFullName());
@@ -279,6 +291,7 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"choice-arm-list"}, allEntries = true)
     public Equip add(EquipDtoV1 equipDtoV1) throws MyException {
         Equip equip = new Equip();
         fillEquip(equipDtoV1, equip);
@@ -287,6 +300,7 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"choice-arm-list"}, allEntries = true)
     public Equip update(EquipDtoV1 equipDtoV1) throws MyException {
         Equip equip = findById(equipDtoV1.getId());
         fillEquip(equipDtoV1, equip);
@@ -295,6 +309,7 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"choice-arm-list"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         Equip equip = findById(id);
         equip.setStatus(EntityStatus.DELETED);

@@ -23,8 +23,8 @@ import ru.az.mz.services.SecurityService;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ArmServiceV1Impl implements ArmServiceV1 {
@@ -74,7 +74,12 @@ public class ArmServiceV1Impl implements ArmServiceV1 {
 
     @Override
     public List<ArmDtoV1> findAllByNameForChoice(String name) {
-        return Collections.emptyList();
+        return armRepo.findAllByNameContainingAndStatus(
+                name,
+                EntityStatus.ACTIVE,
+                PageRequest.of(0, 10, Sort.by("name"))
+        ).map(ArmDtoV1::createWithPop).stream()
+                .collect(Collectors.toList());
     }
 
     private void fillArm(ArmDtoV1 armDtoV1, Arm arm) {

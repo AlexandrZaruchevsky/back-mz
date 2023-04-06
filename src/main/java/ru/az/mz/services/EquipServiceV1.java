@@ -26,4 +26,6 @@ public interface EquipServiceV1 extends CrudServiceV1<Equip, EquipDtoV1> {
 
     EquipDtoV1 findByIdWithMol(Long id) throws MyException;
 
+    List<EquipDtoV1> findAllByNameForChoice(String name);
+
 }

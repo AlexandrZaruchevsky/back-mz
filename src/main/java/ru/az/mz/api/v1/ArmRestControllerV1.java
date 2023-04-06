@@ -11,6 +11,8 @@ import ru.az.mz.dto.v1.PageRequestDtoV1;
 import ru.az.mz.services.ArmServiceV1;
 import ru.az.mz.services.MyException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/arms")
 public class ArmRestControllerV1 {
@@ -29,14 +31,18 @@ public class ArmRestControllerV1 {
             PageRequestDtoV1 pageRequestDtoV1
     ) {
         return armServiceV1.findAll(pageRequestDtoV1);
-//        PageRequest pageRequest = pageRequestDtoV1 == null
-//                ? setupParameters.getPageRequestDefault()
-//                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize());
-//        return armServiceV1.findAll(pageRequest).map(ArmDtoV1::createWithPop);
+    }
+
+    @GetMapping("list-choice")
+    @PreAuthorize("hasAnyAuthority('user:read','user:write')")
+    public List<ArmDtoV1> findAllByNameForChoice(
+            @RequestParam(defaultValue = "", required = false) String name
+    ){
+        return armServiceV1.findAllByNameForChoice(name);
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyAuthority('admin:read','admin:write')")
+    @PreAuthorize("hasAnyAuthority('user:read','user:write')")
     public ArmDtoV1 findById(
             @PathVariable Long id
     ) throws MyException {
