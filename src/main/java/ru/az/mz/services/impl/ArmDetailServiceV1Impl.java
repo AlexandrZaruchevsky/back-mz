@@ -90,6 +90,7 @@ public class ArmDetailServiceV1Impl implements ArmDetailServiceV1 {
     public boolean delete(long id) throws MyException {
         ArmDetail armDetail = findById(id);
         armDetail.setStatus(EntityStatus.DELETED);
+        armDetail.setEquip(null);
         armDetail.setSaveByUser(securityService.getUsername());
         armDetailRepo.save(armDetail);
         return true;
