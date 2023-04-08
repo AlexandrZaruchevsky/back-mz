@@ -5,10 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.az.mz.model.*;
 import ru.az.mz.repositories.*;
-import ru.az.mz.services.MyException;
-import ru.az.mz.services.NotFoundException;
-import ru.az.mz.services.SecurityService;
-import ru.az.mz.services.UploadServiceV1;
+import ru.az.mz.services.*;
+import ru.az.mz.util.equip.model.EquipCsv;
 import ru.az.sfr.util.ad.xml.model.dom.ADUser;
 
 import javax.transaction.Transactional;
@@ -25,6 +23,7 @@ public class UploadServiceV1Impl implements UploadServiceV1 {
     private final PointOfPresenceRepo pointOfPresenceRepo;
     private final EmployeeRepo employeeRepo;
     private final SecurityService securityService;
+    private final EquipRepo equipRepo;
 
     public UploadServiceV1Impl(
             DepartmentRepo departmentRepo,
@@ -32,14 +31,15 @@ public class UploadServiceV1Impl implements UploadServiceV1 {
             PositionRepo positionRepo,
             PointOfPresenceRepo pointOfPresenceRepo,
             EmployeeRepo employeeRepo,
-            SecurityService securityService
-    ) {
+            SecurityService securityService,
+            EquipRepo equipRepo) {
         this.departmentRepo = departmentRepo;
         this.organizationRepo = organizationRepo;
         this.positionRepo = positionRepo;
         this.pointOfPresenceRepo = pointOfPresenceRepo;
         this.employeeRepo = employeeRepo;
         this.securityService = securityService;
+        this.equipRepo = equipRepo;
     }
 
 
@@ -190,9 +190,36 @@ public class UploadServiceV1Impl implements UploadServiceV1 {
         departmentRepo.deleteAll();
     }
 
+    @Override
+    @Transactional
+    public void loadEquipFromCsv(List<EquipCsv> listEquipCsv) {
+        listEquipCsv.stream()
+                .map(this::createFromEquipCsv)
+                .forEach(equipRepo::save);
+    }
+
+    @Override
+    public void clearEquip() {
+        equipRepo.deleteAll();
+    }
+
     private String getWorkStation(String info) {
         String[] strings = info != null ? info.split(":") : null;
         return strings != null && strings.length > 1 ? strings[1].trim() : null;
+    }
+
+    private Equip createFromEquipCsv(EquipCsv equipCsv) {
+        Equip equip = new Equip();
+        equip.setShortName(equipCsv.getName());
+        equip.setFullName(equipCsv.getName());
+        equip.setInventoryNumber(equipCsv.getInventoryNumber());
+        equip.setEmployeeMol(equipCsv.getAccountName());
+        String description =
+                "appartment -> " + equipCsv.getApartment() + ";" +
+                        "smeta-code -> " + equipCsv.getSmetaCode() + ";" +
+                        "quantity -> " + equipCsv.getQuantity();
+        equip.setSaveByUser(securityService.getUsername());
+        return equip;
     }
 
 }
