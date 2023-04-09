@@ -28,7 +28,16 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/public", "/assets/**", "/api/v1/auth/**",  "/all/**/**", "/monitor/**", "/api-docs/**").permitAll()
+                .antMatchers(
+                        "/",
+                        "/public",
+                        "/assets/**",
+                        "/api/v1/auth/**",
+                        "/api/v1/all/**",
+                        "/all/**/**",
+                        "/monitor/**",
+                        "/api-docs/**"
+                ).permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

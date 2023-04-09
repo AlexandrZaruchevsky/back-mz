@@ -2,6 +2,7 @@ package ru.az.mz.services.impl;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -9,10 +10,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.az.mz.dto.v1.EmployeeDtoV1;
+import ru.az.mz.dto.v1.PageRequestDtoV1;
 import ru.az.mz.model.Employee;
 import ru.az.mz.model.EntityStatus;
 import ru.az.mz.repositories.EmployeeRepo;
 import ru.az.mz.services.*;
+import ru.az.mz.util.UtilZ;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Primary
 public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
 
     private final EmployeeRepo employeeRepo;
@@ -82,7 +86,7 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
 
     @Override
     public List<EmployeeDtoV1> findAllByFioForChoice(String fio) {
-        Map<String, String> fio1 = getFio(fio);
+        Map<String, String> fio1 = UtilZ.getFio(fio);
         return employeeRepo.findAllByLastNameStartingWithAndFirstNameStartingWithAndMiddleNameStartingWithAndStatus(
                 fio1.get("lastName"),
                 fio1.get("firstName"),
@@ -94,36 +98,41 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
                 .collect(Collectors.toList());
     }
 
-    public Map<String, String> getFio(String fio) {
-        HashMap<String, String> mapFio = new HashMap<>();
-        String[] split = fio.trim().split("\\s+");
-        switch (split.length) {
-            case 0:
-                mapFio.put("lastName", "");
-                mapFio.put("firstName", "");
-                mapFio.put("middleName", "");
-                break;
-            case 1:
-                mapFio.put("lastName", split[0]);
-                mapFio.put("firstName", "");
-                mapFio.put("middleName", "");
-                break;
-            case 2:
-                mapFio.put("lastName", split[0]);
-                mapFio.put("firstName", split[1]);
-                mapFio.put("middleName", "");
-                break;
-            default:
-                mapFio.put("lastName", split[0]);
-                mapFio.put("firstName", split[1]);
-                mapFio.put("middleName", split[2]);
-        }
-        return mapFio;
+    @Override
+    public Page<EmployeeDtoV1> findAll(PageRequestDtoV1 pageRequest) {
+        return null;
     }
+
+//    public Map<String, String> getFio(String fio) {
+//        HashMap<String, String> mapFio = new HashMap<>();
+//        String[] split = fio.trim().split("\\s+");
+//        switch (split.length) {
+//            case 0:
+//                mapFio.put("lastName", "");
+//                mapFio.put("firstName", "");
+//                mapFio.put("middleName", "");
+//                break;
+//            case 1:
+//                mapFio.put("lastName", split[0]);
+//                mapFio.put("firstName", "");
+//                mapFio.put("middleName", "");
+//                break;
+//            case 2:
+//                mapFio.put("lastName", split[0]);
+//                mapFio.put("firstName", split[1]);
+//                mapFio.put("middleName", "");
+//                break;
+//            default:
+//                mapFio.put("lastName", split[0]);
+//                mapFio.put("firstName", split[1]);
+//                mapFio.put("middleName", split[2]);
+//        }
+//        return mapFio;
+//    }
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"employees", "employeeList"}, allEntries = true)
+    @CacheEvict(cacheNames = {"employees", "employeeList", "guest-employees"}, allEntries = true)
     public Employee add(EmployeeDtoV1 employeeDtoV1) throws MyException {
         Employee employee = new Employee();
         fillEmployee(employeeDtoV1, employee);
@@ -161,7 +170,7 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"employees", "employeeList"}, allEntries = true)
+    @CacheEvict(cacheNames = {"employees", "employeeList", "guest-employees"}, allEntries = true)
     public Employee update(EmployeeDtoV1 employeeDtoV1) throws MyException {
         Employee employee = findById(employeeDtoV1.getId());
         fillEmployee(employeeDtoV1, employee);
@@ -169,7 +178,7 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"employees", "employeeList"}, allEntries = true)
+    @CacheEvict(cacheNames = {"employees", "employeeList", "guest-employees"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         Employee employee = findById(id);
         employee.setStatus(EntityStatus.DELETED);

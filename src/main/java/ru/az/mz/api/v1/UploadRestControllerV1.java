@@ -65,7 +65,7 @@ public class UploadRestControllerV1 {
     ) throws IOException {
         if (!file.isEmpty() && Objects.requireNonNull(file.getOriginalFilename()).endsWith(".csv")) {
             List<EquipCsv> equipCsv = csvService.getEquipCsv(file.getInputStream());
-            uploadServiceV1.clearEquip();
+//            uploadServiceV1.clearEquip();
             uploadServiceV1.loadEquipFromCsv(equipCsv);
         }
         return "Upload equips";
