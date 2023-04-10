@@ -48,4 +48,7 @@ public interface EmployeeRepo extends PagingAndSortingRepository<Employee, Long>
 
     long countByStatus(EntityStatus status);
 
+    @EntityGraph("Employee.withDepartmentAndPosition")
+    List<Employee> findAll();
+
 }
