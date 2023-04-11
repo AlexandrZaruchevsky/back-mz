@@ -40,7 +40,10 @@ public class StatEmplServiceV1Impl implements StatEmplServiceV1 {
     @Override
     @Cacheable(cacheNames = {"empl-stats"})
     public EmplStatDtoV1 getStatistics() {
-        List<Employee> empls = employeeRepo.findAll();
+        List<Employee> empls = employeeRepo.findAll().stream()
+                .filter(employee -> EntityStatus.ACTIVE.equals(employee.getStatus()))
+                .filter(employee -> Objects.nonNull(employee.getPosition()))
+                .collect(Collectors.toList());
         List<DepStatDtoV1> depStat = empls.stream()
                 .map(Employee::getDepartment)
                 .filter(Objects::nonNull)
@@ -91,6 +94,8 @@ public class StatEmplServiceV1Impl implements StatEmplServiceV1 {
                     .ifPresent(department ->
                             empls.addAll(
                                     employeeRepo.findAllByDepartmentAndStatus(department, EntityStatus.ACTIVE).stream()
+                                            .filter(employee -> EntityStatus.ACTIVE.equals(employee.getStatus()))
+                                            .filter(employee -> Objects.nonNull(employee.getPosition()))
                                             .sorted(
                                                     Comparator.comparing(Employee::getLastName)
                                                             .thenComparing(Employee::getFirstName)
@@ -104,6 +109,7 @@ public class StatEmplServiceV1Impl implements StatEmplServiceV1 {
             empls.addAll(
                     employeeRepo.findAll().stream()
                             .filter(employee -> EntityStatus.ACTIVE.equals(employee.getStatus()))
+                            .filter(employee -> Objects.nonNull(employee.getPosition()))
                             .sorted(
                                     Comparator.comparing(Employee::getLastName)
                                             .thenComparing(Employee::getFirstName)
