@@ -151,7 +151,7 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"departmentsByOrg", "organizationWithDependencies"}, allEntries = true)
+    @CacheEvict(cacheNames = {"departmentsByOrg", "organizationWithDependencies", "dep-list"}, allEntries = true)
     public Department add(DepartmentDtoV2 departmentDto) throws MyException {
         Department department = new Department();
         fillDepartment(departmentDto, department);
@@ -160,7 +160,7 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"departmentsByOrg", "organizationWithDependencies"}, allEntries = true)
+    @CacheEvict(cacheNames = {"departmentsByOrg", "organizationWithDependencies", "dep-list"}, allEntries = true)
     public Department update(DepartmentDtoV2 departmentDto) throws MyException {
         Department department = findById(departmentDto.getId());
         fillDepartment(departmentDto, department);
@@ -168,7 +168,7 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"departmentsByOrg", "organizationWithDependencies"}, allEntries = true)
+    @CacheEvict(cacheNames = {"departmentsByOrg", "organizationWithDependencies", "dep-list"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         Department department = findById(id);
         department.setStatus(EntityStatus.DELETED);
@@ -190,10 +190,11 @@ public class DepartmentServiceV1Impl implements DepartmentServiceV1 {
     }
 
     @Override
+    @Cacheable(cacheNames = {"dep-list"})
     public List<Department> findAll() {
-        List<Department> departments = new ArrayList<>();
-        departmentRepo.findAll().forEach(departments::add);
-        return departments;
+        return departmentRepo.findAllByStatus(EntityStatus.ACTIVE).stream()
+                .sorted(Comparator.comparing(Department::getName))
+                .collect(Collectors.toList());
     }
 
     @Override

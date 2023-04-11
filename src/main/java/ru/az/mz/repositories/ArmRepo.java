@@ -24,6 +24,9 @@ public interface ArmRepo extends PagingAndSortingRepository<Arm, Long> {
     @EntityGraph("Arm.withAll")
     Optional<Arm> findByIdAndStatus(Long id, EntityStatus status);
 
+    @EntityGraph("Arm.withArmDetailsWithEquips")
+    List<Arm> findAllByMolAndStatus(String mol, EntityStatus status);
+
 
     List<Arm> findAllByStatus(EntityStatus status);
 

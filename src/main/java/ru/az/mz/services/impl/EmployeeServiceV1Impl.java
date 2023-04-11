@@ -103,7 +103,16 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"employees", "employeeList", "guest-employees", "empl-stats"}, allEntries = true)
+    @CacheEvict(
+            cacheNames = {
+                    "employees",
+                    "employeeList",
+                    "guest-employees",
+                    "empl-stats",
+                    "empl-by-dep-stats"
+            },
+            allEntries = true
+    )
     public Employee add(EmployeeDtoV1 employeeDtoV1) throws MyException {
         Employee employee = new Employee();
         fillEmployee(employeeDtoV1, employee);
@@ -141,7 +150,16 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"employees", "employeeList", "guest-employees", "empl-stats"}, allEntries = true)
+    @CacheEvict(
+            cacheNames = {
+                    "employees",
+                    "employeeList",
+                    "guest-employees",
+                    "empl-stats",
+                    "empl-by-dep-stats"
+            },
+            allEntries = true
+    )
     public Employee update(EmployeeDtoV1 employeeDtoV1) throws MyException {
         Employee employee = findById(employeeDtoV1.getId());
         fillEmployee(employeeDtoV1, employee);
@@ -149,7 +167,16 @@ public class EmployeeServiceV1Impl implements EmployeeServiceV1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"employees", "employeeList", "guest-employees","empl-stats"}, allEntries = true)
+    @CacheEvict(
+            cacheNames = {
+                    "employees",
+                    "employeeList",
+                    "guest-employees",
+                    "empl-stats",
+                    "empl-by-dep-stats"
+            },
+            allEntries = true
+    )
     public boolean delete(long id) throws MyException {
         Employee employee = findById(id);
         employee.setStatus(EntityStatus.DELETED);

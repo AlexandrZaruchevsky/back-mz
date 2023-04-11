@@ -22,6 +22,24 @@ import java.util.List;
         @NamedEntityGraph(
                 name = "Arm.withAll",
                 includeAllAttributes = true
+        ),
+        @NamedEntityGraph(
+                name = "Arm.withArmDetailsWithEquips",
+                attributeNodes = @NamedAttributeNode(value = "armDetails", subgraph = "subgraph.armDetail"),
+                subgraphs = {
+                        @NamedSubgraph(
+                                name = "subgraph.armDetail",
+                                attributeNodes = @NamedAttributeNode(value = "equip", subgraph = "subgraph.equipWithTypeAndModel")
+
+                        ),
+                        @NamedSubgraph(
+                                name="subgraph.equipWithTypeAndModel",
+                                attributeNodes = {
+                                        @NamedAttributeNode("equipType"),
+                                        @NamedAttributeNode("equipModel")
+                                }
+                        )
+                }
         )
 })
 public class Arm extends BaseEntity {

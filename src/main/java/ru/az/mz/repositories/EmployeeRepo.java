@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import ru.az.mz.model.Department;
 import ru.az.mz.model.Employee;
 import ru.az.mz.model.EntityStatus;
 
@@ -50,5 +51,8 @@ public interface EmployeeRepo extends PagingAndSortingRepository<Employee, Long>
 
     @EntityGraph("Employee.withDepartmentAndPosition")
     List<Employee> findAll();
+
+    @EntityGraph("Employee.withDepartmentAndPosition")
+    List<Employee> findAllByDepartmentAndStatus(Department department, EntityStatus status);
 
 }

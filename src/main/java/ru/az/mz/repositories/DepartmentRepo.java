@@ -50,4 +50,7 @@ public interface DepartmentRepo extends PagingAndSortingRepository<Department, L
 
     long countAllByStatus(EntityStatus status);
 
+    @EntityGraph("Department.withOrganization")
+    List<Department> findAllByStatus(EntityStatus status);
+
 }
