@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import ru.az.mz.model.EntityStatus;
 import ru.az.mz.model.Equip;
 
 import java.time.LocalDate;
@@ -33,7 +34,7 @@ public class EquipInfoV1 {
     private String equipModelName;
 
     public static Optional<EquipInfoV1> create(Equip equip) {
-        if (equip == null) return Optional.empty();
+        if (equip == null || !EntityStatus.ACTIVE.equals(equip.getStatus())) return Optional.empty();
         EquipInfoV1 equipInfoV1 = new EquipInfoV1();
         BeanUtils.copyProperties(equip, equipInfoV1);
         if (equip.getEquipType() != null) {

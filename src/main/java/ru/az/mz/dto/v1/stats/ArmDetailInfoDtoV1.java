@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import ru.az.mz.model.ArmDetail;
+import ru.az.mz.model.EntityStatus;
+
 import java.util.Optional;
 
 @Data
@@ -20,7 +22,7 @@ public class ArmDetailInfoDtoV1 {
     private EquipInfoV1 equip;
 
     public static Optional<ArmDetailInfoDtoV1> create(ArmDetail armDetail) {
-        if (armDetail == null) return Optional.empty();
+        if (armDetail == null || !EntityStatus.ACTIVE.equals(armDetail.getStatus())) return Optional.empty();
         ArmDetailInfoDtoV1 armDetailInfo = new ArmDetailInfoDtoV1();
         BeanUtils.copyProperties(armDetail, armDetailInfo);
         EquipInfoV1.create(armDetail.getEquip())
