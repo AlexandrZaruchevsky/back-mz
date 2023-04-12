@@ -10,9 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.az.mz.config.SetupParameters;
 import ru.az.mz.dto.v1.*;
-import ru.az.mz.model.Employee;
-import ru.az.mz.model.EntityStatus;
-import ru.az.mz.model.Equip;
+import ru.az.mz.model.*;
 import ru.az.mz.repositories.*;
 import ru.az.mz.services.EquipServiceV1;
 import ru.az.mz.services.MyException;
@@ -20,6 +18,7 @@ import ru.az.mz.services.NotFoundException;
 import ru.az.mz.services.SecurityService;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -218,9 +217,18 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
     @Cacheable(cacheNames = "equipParents")
     public EquipParentsDtoV1 getEquipParents() {
         return new EquipParentsDtoV1(
-                armRepo.findAllByStatus(EntityStatus.ACTIVE).stream().map(ArmDtoV1::create).collect(Collectors.toList()),
-                equipTypeRepo.findAllByStatus(EntityStatus.ACTIVE).stream().map(EquipTypeDtoV1::create).collect(Collectors.toList()),
-                equipModelRepo.findAllByStatus(EntityStatus.ACTIVE).stream().map(EquipModelDtoV1::createWithEquipType).collect(Collectors.toList())
+                armRepo.findAllByStatus(EntityStatus.ACTIVE).stream()
+                        .sorted(Comparator.comparing(Arm::getName))
+                        .map(ArmDtoV1::create)
+                        .collect(Collectors.toList()),
+                equipTypeRepo.findAllByStatus(EntityStatus.ACTIVE).stream()
+                        .sorted(Comparator.comparing(EquipType::getName))
+                        .map(EquipTypeDtoV1::create)
+                        .collect(Collectors.toList()),
+                equipModelRepo.findAllByStatus(EntityStatus.ACTIVE).stream()
+                        .sorted(Comparator.comparing(EquipModel::getName))
+                        .map(EquipModelDtoV1::createWithEquipType)
+                        .collect(Collectors.toList())
         );
     }
 

@@ -6,7 +6,7 @@ import ru.az.mz.dto.v1.stats.EmplInfoDtoV1;
 import ru.az.mz.services.OrganizationServiceV1;
 import ru.az.mz.services.stats.StatEmplServiceV1;
 
-@Component
+//@Component
 public class TestCL implements CommandLineRunner {
 
     private final OrganizationServiceV1 organizationServiceV1;

@@ -40,7 +40,9 @@ public class EquipTypeServiceV1Impl implements EquipTypeServiceV1 {
 
     @Override
     public List<EquipType> findAll(EntityStatus status) {
-        return equipTypeRepo.findAllByStatus(EntityStatus.ACTIVE);
+        return equipTypeRepo.findAllByStatus(EntityStatus.ACTIVE).stream()
+                .sorted(Comparator.comparing(EquipType::getName))
+                .collect(Collectors.toList());
     }
 
     private void fillEquipType(EquipTypeDtoV1 equipTypeDtoV1, EquipType equipType) {

@@ -21,7 +21,9 @@ import ru.az.mz.services.NotFoundException;
 import ru.az.mz.services.SecurityService;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EquipModelServiceV1Impl implements EquipModelServiceV1 {
@@ -75,7 +77,9 @@ public class EquipModelServiceV1Impl implements EquipModelServiceV1 {
 
     @Override
     public List<EquipModel> findAll(EntityStatus status) {
-        return equipModelRepo.findAllByStatus(status);
+        return equipModelRepo.findAllByStatus(status).stream()
+                .sorted(Comparator.comparing(EquipModel::getName))
+                .collect(Collectors.toList());
     }
 
     private void fillEquipModel(EquipModelDtoV1 equipModelDtoV1, EquipModel equipModel) {
