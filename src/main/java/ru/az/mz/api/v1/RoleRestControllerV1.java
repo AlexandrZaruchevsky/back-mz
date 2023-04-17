@@ -44,10 +44,11 @@ public class RoleRestControllerV1 {
     public Page<RoleDtoV1> findAll(
             PageRequestDtoV1 pageRequest
     ) {
-        PageRequest pr = pageRequest == null
-                ? setupParameters.getPageRequestDefault()
-                : PageRequest.of(pageRequest.getPageCurrent(), pageRequest.getPageSize());
-        return roleServiceV1.findAll(pr).map(RoleDtoV1::createWithPermissions);
+        return roleServiceV1.findAllByName(pageRequest);
+        //        PageRequest pr = pageRequest == null
+//                ? setupParameters.getPageRequestDefault()
+//                : PageRequest.of(pageRequest.getPageCurrent(), pageRequest.getPageSize());
+//        return roleServiceV1.findAll(pr).map(RoleDtoV1::createWithPermissions);
     }
 
     @GetMapping("all")
