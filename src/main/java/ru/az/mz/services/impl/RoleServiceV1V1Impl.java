@@ -14,10 +14,7 @@ import ru.az.mz.services.NotFoundException;
 import ru.az.mz.services.RoleServiceV1V1;
 import ru.az.mz.services.SecurityService;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +34,14 @@ public class RoleServiceV1V1Impl implements RoleServiceV1V1 {
         List<Role> listRole = new ArrayList<>();
         allById.forEach(listRole::add);
         return listRole;
+    }
+
+    @Override
+    public List<RoleDtoV1> findAllRolesDto() {
+        return roleRepo.findAllByStatus(EntityStatus.ACTIVE).stream()
+                .map(RoleDtoV1::create)
+                .sorted(Comparator.comparing(RoleDtoV1::getName))
+                .collect(Collectors.toList());
     }
 
     private void fillRole(RoleDtoV1 roleDtoV1, Role role) {

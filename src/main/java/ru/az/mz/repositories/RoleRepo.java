@@ -10,4 +10,6 @@ public interface RoleRepo extends PagingAndSortingRepository<Role, Long> {
 
     long countAllByStatus(EntityStatus status);
 
+    List<Role> findAllByStatus(EntityStatus status);
+
 }

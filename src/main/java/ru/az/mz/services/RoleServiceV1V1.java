@@ -9,4 +9,6 @@ public interface RoleServiceV1V1 extends CrudServiceV1<Role, RoleDtoV1> {
 
     List<Role> findAllByIds(List<Long> ids);
 
+    List<RoleDtoV1> findAllRolesDto();
+
 }

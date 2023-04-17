@@ -4,21 +4,29 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.az.mz.config.SetupParameters;
+import ru.az.mz.dto.v1.PageRequestDtoV1;
 import ru.az.mz.dto.v1.RoleDtoV1;
 import ru.az.mz.dto.v1.UserAuthDtoV1;
+import ru.az.mz.dto.v1.UserDtoV1;
 import ru.az.mz.model.EntityStatus;
 import ru.az.mz.model.Role;
 import ru.az.mz.model.User;
 import ru.az.mz.repositories.UserRepo;
 import ru.az.mz.services.*;
+import ru.az.mz.util.FIO;
+import ru.az.mz.util.UtilZ;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,13 +35,21 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     private final UserRepo userRepo;
     private final SecurityService securityService;
     private final PasswordEncoder passwordEncoder;
+    private final SetupParameters setupParameters;
 
     private final RoleServiceV1V1 roleServiceV1;
 
-    public UserServiceV1V1Impl(UserRepo userRepo, SecurityService securityService, PasswordEncoder passwordEncoder, RoleServiceV1V1 roleServiceV1) {
+    public UserServiceV1V1Impl(
+            UserRepo userRepo,
+            SecurityService securityService,
+            PasswordEncoder passwordEncoder,
+            SetupParameters setupParameters,
+            RoleServiceV1V1 roleServiceV1
+    ) {
         this.userRepo = userRepo;
         this.securityService = securityService;
         this.passwordEncoder = passwordEncoder;
+        this.setupParameters = setupParameters;
         this.roleServiceV1 = roleServiceV1;
     }
 
@@ -55,6 +71,39 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     }
 
     @Override
+    @Cacheable(
+            cacheNames = {"user-page"},
+            key = "{#pageRequest.sortBy, #pageRequest.search, #pageRequest.pageCurrent, #pageRequest.pageSize}"
+    )
+    public Page<UserDtoV1> findAllByUsernameOrFio(PageRequestDtoV1 pageRequest) {
+        Sort sort = Sort.by("lastName", "firstName", "middleName");
+        if (pageRequest == null) {
+            return userRepo.findAllByStatus(
+                    EntityStatus.ACTIVE,
+                    setupParameters.getPageRequestDefault().withSort(sort)
+            ).map(UserDtoV1::create);
+        }
+        PageRequest request = PageRequest.of(pageRequest.getPageCurrent(), pageRequest.getPageSize());
+        if ("username".equalsIgnoreCase(pageRequest.getSortBy())) {
+            return userRepo.findAllByUsernameContainingAndStatus(
+                    pageRequest.getSearch(),
+                    EntityStatus.ACTIVE,
+                    request.withSort(Sort.by("username"))
+            ).map(UserDtoV1::create);
+        } else {
+//            Map<String, String> fio = UtilZ.getFio(pageRequest.getSearch());
+            Map<FIO, String> fio = UtilZ.getFioByEnum(pageRequest.getSearch());
+            return userRepo.findAllByLastNameContainingAndFirstNameContainingAndMiddleNameContainingAndStatus(
+                    fio.get(FIO.LAST_NAME),
+                    fio.get(FIO.FIRST_NAME),
+                    fio.get(FIO.MIDDLE_NAME),
+                    EntityStatus.ACTIVE,
+                    request.withSort(sort)
+            ).map(UserDtoV1::create);
+        }
+    }
+
+    @Override
     @CacheEvict(cacheNames = {"userSecurity"}, key = "#username")
     public void changePassword(String username, String password) throws MyException {
         User userFromDb = findByUsername(username);
@@ -63,19 +112,19 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"userSecurity"}, allEntries = true)
+    @CacheEvict(cacheNames = {"userSecurity", "user-page"}, allEntries = true)
     public void changeStatus(Long id) throws MyException {
         User userFromDb = findById(id);
-        if(EntityStatus.ACTIVE.equals(userFromDb.getStatus())){
+        if (EntityStatus.ACTIVE.equals(userFromDb.getStatus())) {
             userFromDb.setStatus(EntityStatus.NOT_ACTIVE);
-        }else if (EntityStatus.NOT_ACTIVE.equals(userFromDb.getStatus())){
+        } else if (EntityStatus.NOT_ACTIVE.equals(userFromDb.getStatus())) {
             userFromDb.setStatus(EntityStatus.ACTIVE);
-        }else throw new MyException("Bad Status", HttpStatus.BAD_REQUEST);
+        } else throw new MyException("Bad Status", HttpStatus.BAD_REQUEST);
         userRepo.save(userFromDb);
     }
 
     @Override
-    @CacheEvict(cacheNames = {"userSecurity"}, allEntries = true)
+    @CacheEvict(cacheNames = {"userSecurity", "user-page"}, allEntries = true)
     public User add(UserAuthDtoV1 userAuthDtoV1) {
         User user = new User();
         fillUser(userAuthDtoV1, user);
@@ -97,7 +146,8 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     }
 
     @Override
-    @CachePut(cacheNames = {"userSecurity"}, key = "#userAuthDtoV1.username")
+    @CachePut(cacheNames = {"userSecurity", "user-page"}, key = "#userAuthDtoV1.username")
+    @CacheEvict(cacheNames = {"user-page"}, allEntries = true)
     public User update(UserAuthDtoV1 userAuthDtoV1) throws MyException {
         User userFromDb = findById(userAuthDtoV1.getId());
         fillUser(userAuthDtoV1, userFromDb);
@@ -106,7 +156,7 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"userSecurity"}, allEntries = true)
+    @CacheEvict(cacheNames = {"userSecurity", "user-page"}, allEntries = true)
     public boolean delete(long id) throws MyException {
         User userFromDb = findById(id);
         userFromDb.setStatus(EntityStatus.DELETED);
@@ -123,7 +173,7 @@ public class UserServiceV1V1Impl implements UserServiceV1V1 {
 
     @Override
     public Page<User> findAll(Pageable pageable) {
-        return userRepo.findAll(pageable);
+        return userRepo.findAllByStatus(EntityStatus.ACTIVE, pageable);
     }
 
     @Override

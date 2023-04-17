@@ -50,6 +50,12 @@ public class RoleRestControllerV1 {
         return roleServiceV1.findAll(pr).map(RoleDtoV1::createWithPermissions);
     }
 
+    @GetMapping("all")
+    @PreAuthorize("hasAnyAuthority('admin:read', 'admin:write')")
+    public List<RoleDtoV1> findAll(){
+        return roleServiceV1.findAllRolesDto();
+    }
+
     @GetMapping("{id}")
     public RoleDtoV1 findById(
             @PathVariable Long id

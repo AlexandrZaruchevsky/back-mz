@@ -34,4 +34,31 @@ public class UtilZ {
         return mapFio;
     }
 
+    public static Map<FIO, String> getFioByEnum(String fio) {
+        HashMap<FIO, String> mapFio = new HashMap<>();
+        String[] split = fio.trim().split("\\s+");
+        switch (split.length) {
+            case 0:
+                mapFio.put(FIO.LAST_NAME, "");
+                mapFio.put(FIO.FIRST_NAME, "");
+                mapFio.put(FIO.MIDDLE_NAME, "");
+                break;
+            case 1:
+                mapFio.put(FIO.LAST_NAME, split[0]);
+                mapFio.put(FIO.FIRST_NAME, "");
+                mapFio.put(FIO.MIDDLE_NAME, "");
+                break;
+            case 2:
+                mapFio.put(FIO.LAST_NAME, split[0]);
+                mapFio.put(FIO.FIRST_NAME, split[1]);
+                mapFio.put(FIO.MIDDLE_NAME, "");
+                break;
+            default:
+                mapFio.put(FIO.LAST_NAME, split[0]);
+                mapFio.put(FIO.FIRST_NAME, split[1]);
+                mapFio.put(FIO.MIDDLE_NAME, split[2]);
+        }
+        return mapFio;
+    }
+
 }

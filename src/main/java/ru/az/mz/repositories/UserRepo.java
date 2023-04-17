@@ -17,9 +17,18 @@ public interface UserRepo extends PagingAndSortingRepository<User, Long> {
     @EntityGraph("User.withAll")
     Optional<User> findByIdAndStatus(Long id, EntityStatus status);
 
-    Page<User> findAll(Pageable pageable);
+    Page<User> findAllByStatus(EntityStatus status, Pageable pageable);
 
     Page<User> findAllByUsernameStartingWith(String username, Pageable pageable);
+
+    Page<User> findAllByUsernameContainingAndStatus(String username, EntityStatus status, Pageable pageable);
+    Page<User> findAllByLastNameContainingAndFirstNameContainingAndMiddleNameContainingAndStatus(
+            String lastName,
+            String firstName,
+            String middleName,
+            EntityStatus status,
+            Pageable pageable
+    );
 
     long countByStatus(EntityStatus status);
 

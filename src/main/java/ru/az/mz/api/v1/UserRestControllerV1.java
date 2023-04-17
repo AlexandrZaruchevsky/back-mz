@@ -34,10 +34,11 @@ public class UserRestControllerV1 {
     public Page<UserDtoV1> findAll(
             PageRequestDtoV1 pageRequestDtoV1
     ) {
-        PageRequest of = pageRequestDtoV1 == null
-                ? PageRequest.of(pageCurrent, pageSize)
-                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize());
-        return userServiceV1.findAll(of).map(UserDtoV1::create);
+//        PageRequest of = pageRequestDtoV1 == null
+//                ? PageRequest.of(pageCurrent, pageSize)
+//                : PageRequest.of(pageRequestDtoV1.getPageCurrent(), pageRequestDtoV1.getPageSize());
+//        return userServiceV1.findAll(of).map(UserDtoV1::create);
+        return userServiceV1.findAllByUsernameOrFio(pageRequestDtoV1);
     }
 
     @PostMapping
