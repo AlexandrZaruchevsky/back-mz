@@ -20,7 +20,8 @@ spring:
     multipart:
       max-file-size: 10000000
       max-request-size: 10000000
-
+  main:
+    banner-mode: off
 
 security:
   ldap:

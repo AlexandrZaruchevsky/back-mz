@@ -1,8 +1,7 @@
 package ru.az.mz;
 
-import org.springframework.boot.Banner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cache.annotation.EnableCaching;
 
 @EnableCaching
@@ -10,9 +9,7 @@ import org.springframework.cache.annotation.EnableCaching;
 public class AppStarter {
 
 	public static void main(String[] args) {
-		new SpringApplicationBuilder(AppStarter.class)
-				.bannerMode(Banner.Mode.OFF)
-				.run(args);
+		SpringApplication.run(AppStarter.class);
 	}
 
 }
