@@ -2,6 +2,7 @@ package ru.az.mz.dto.v1;
 
 import lombok.Value;
 import ru.az.mz.model.Arm;
+import ru.az.mz.model.EntityStatus;
 
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +68,9 @@ public class ArmDtoV1 {
                         ? arm.getPointOfPresence().getShortName()
                         : null,
                 arm.getArmDetails() != null
-                        ? arm.getArmDetails().stream().map(ArmDetailDtoV1::create).collect(Collectors.toList())
+                        ? arm.getArmDetails().stream()
+                            .filter(armDetail -> EntityStatus.ACTIVE.equals(armDetail.getStatus()))
+                            .map(ArmDetailDtoV1::create).collect(Collectors.toList())
                         : Collections.emptyList()
         );
     }
