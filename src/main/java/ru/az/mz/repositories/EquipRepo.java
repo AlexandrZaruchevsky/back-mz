@@ -65,4 +65,6 @@ public interface EquipRepo extends PagingAndSortingRepository<Equip, Long> {
     @EntityGraph("Equip.withEquipType")
     Page<Equip> findAllByStatusAndShortNameContaining(EntityStatus status, String shortName, Pageable pageable);
 
+    @EntityGraph("Equip.withEquipType")
+    Page<Equip> findAllByStatusAndInventoryNumberContaining(EntityStatus status, String shortName, Pageable pageable);
 }

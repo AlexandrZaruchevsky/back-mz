@@ -257,7 +257,26 @@ public class EquipServiceV1Impl implements EquipServiceV1 {
         return equipRepo.findAllByStatusAndShortNameContaining(
                 EntityStatus.ACTIVE,
                 name,
-                PageRequest.of(0,50,Sort.by("shortName"))
+                PageRequest.of(0, 50, Sort.by("shortName"))
+        ).map(EquipDtoV1::createWithEquipType).stream()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EquipDtoV1> findAllForChoice(String sortBy, String search) {
+        PageRequest request = PageRequest.of(0, 50);
+        if (sortBy != null && "inventoryNumber".equalsIgnoreCase(sortBy.trim())) {
+            return equipRepo.findAllByStatusAndInventoryNumberContaining(
+                    EntityStatus.ACTIVE,
+                    search,
+                    request.withSort(Sort.by("inventoryNumber"))
+            ).map(EquipDtoV1::createWithEquipType).stream()
+                    .collect(Collectors.toList());
+        }
+        return equipRepo.findAllByStatusAndShortNameContaining(
+                EntityStatus.ACTIVE,
+                search,
+                request.withSort(Sort.by("shortName"))
         ).map(EquipDtoV1::createWithEquipType).stream()
                 .collect(Collectors.toList());
     }

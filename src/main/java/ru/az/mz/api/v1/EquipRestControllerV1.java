@@ -40,9 +40,10 @@ public class EquipRestControllerV1 {
     @GetMapping("list-choice")
     @PreAuthorize("hasAnyAuthority('user:read','user:write')")
     public List<EquipDtoV1> findAllByNameForChoice(
+            @RequestParam(defaultValue = "", required = false) String sortBy,
             @RequestParam(defaultValue = "", required = false) String name
     ){
-        return equipServiceV1.findAllByNameForChoice(name);
+        return equipServiceV1.findAllForChoice(sortBy, name);
     }
 
     @GetMapping("{id}")

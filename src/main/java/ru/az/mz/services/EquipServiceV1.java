@@ -28,4 +28,6 @@ public interface EquipServiceV1 extends CrudServiceV1<Equip, EquipDtoV1> {
 
     List<EquipDtoV1> findAllByNameForChoice(String name);
 
+    List<EquipDtoV1> findAllForChoice(String sortBy, String search);
+
 }
