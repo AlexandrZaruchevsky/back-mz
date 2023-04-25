@@ -38,7 +38,7 @@ public class ArmDetail extends BaseEntity{
     @JoinColumn(name = "arm_id")
     private Arm arm;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "equip_id")
     private Equip equip;
 

@@ -17,7 +17,10 @@ import java.time.LocalDate;
         ),
         @NamedEntityGraph(
                 name = "Equip.withEquipType",
-                attributeNodes = @NamedAttributeNode("equipType")
+                attributeNodes = {
+                        @NamedAttributeNode("equipType"),
+                        @NamedAttributeNode("armDetail"),
+                }
         ),
         @NamedEntityGraph(
                 name = "Equip.withEquipModel",
@@ -70,7 +73,8 @@ public class Equip extends BaseEntity{
     @JoinColumn(name = "equip_model_id")
     private EquipModel equipModel;
 
-    @OneToOne(mappedBy = "equip")
+
+    @OneToOne(mappedBy = "equip", fetch = FetchType.LAZY)
     private ArmDetail armDetail;
 
 }
