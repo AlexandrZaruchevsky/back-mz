@@ -3,10 +3,8 @@ package ru.az.mz.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -18,7 +16,10 @@ public class SubnetMap extends BaseEntity {
     private String subnetName;
 
     @Lob
-    @Column(name = "subnet_map_xml", columnDefinition = "BLOB")
+    @Column(name = "subnet_map_xml", columnDefinition = "MEDIUMBLOB")
     private byte[] subnetMapXml;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "subnetMap")
+    private List<EquipNet> equipNets;
 
 }

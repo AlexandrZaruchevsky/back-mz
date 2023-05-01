@@ -2,10 +2,12 @@ package ru.az.mz.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class UtilZ {
 
-    private UtilZ(){}
+    private UtilZ() {
+    }
 
     public static Map<String, String> getFio(String fio) {
         HashMap<String, String> mapFio = new HashMap<>();
@@ -59,6 +61,22 @@ public class UtilZ {
                 mapFio.put(FIO.MIDDLE_NAME, split[2]);
         }
         return mapFio;
+    }
+
+    public static boolean ipV4Validate(String subnet) {
+        Pattern pattern = Pattern.compile("^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$");
+        return pattern.matcher(subnet).find();
+    }
+
+    public static String getHostNameShort(String hostName) {
+        if (hostName == null) return null;
+        if (ipV4Validate(hostName)) return hostName;
+        String replaceAll = hostName.replaceAll("\\s+", "");
+        if (replaceAll.indexOf(".") > 0) {
+            return replaceAll.substring(0, replaceAll.indexOf("."));
+        } else {
+            return replaceAll;
+        }
     }
 
 }

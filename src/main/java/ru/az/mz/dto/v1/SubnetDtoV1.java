@@ -2,11 +2,10 @@ package ru.az.mz.dto.v1;
 
 import lombok.Data;
 import ru.az.mz.dto.v1.projections.SubnetMapProjectionV1;
-import ru.az.mz.inventory.service.JAXBService;
 import ru.az.mz.model.SubnetMap;
 import ru.az.mz.services.utils.xml.SubnetXml;
+import ru.az.sfr.util.glpi.configmachine.service.JAXBService;
 
-import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Optional;
@@ -55,7 +54,7 @@ public class SubnetDtoV1 {
                         .map(Optional::get)
                         .collect(Collectors.toList());
                 subnetDtoV1.setSubnetEquips(subnetEquipDtoV1s);
-            } catch (JAXBException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

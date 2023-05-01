@@ -19,7 +19,7 @@ public interface SubnetMapRepo extends PagingAndSortingRepository<SubnetMap, Lon
 
     List<SubnetMap> findAll();
 
-    @Query("select sm.id, sm.subnetName, sm.status from SubnetMap sm order by sm.subnetName")
+    @Query("select sm.id as id, sm.subnetName as subnetName, sm.status as status from SubnetMap sm order by sm.subnetName")
     List<SubnetMapProjectionV1> findAllAsProjection();
 
     @Query("select distinct sm.subnetName from SubnetMap sm order by sm.subnetName")

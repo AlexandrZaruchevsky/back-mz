@@ -31,4 +31,6 @@ public class SubnetEquip {
         setHostAddress(hostAddress);
     }
 
+
+
 }

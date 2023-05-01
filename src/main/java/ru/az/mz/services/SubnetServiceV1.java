@@ -1,6 +1,7 @@
 package ru.az.mz.services;
 
 import ru.az.mz.dto.v1.SubnetDtoV1;
+import ru.az.mz.dto.v1.SubnetEquipDtoV1;
 import ru.az.mz.model.EntityStatus;
 import ru.az.mz.model.SubnetMap;
 import ru.az.mz.services.utils.SubnetEquip;
@@ -30,5 +31,6 @@ public interface SubnetServiceV1 {
 
     List<SubnetDtoV1> getListSubnetDtoV1();
 
+    List<SubnetEquipDtoV1> getSubnetEquipsBySubnetId(Long id) throws MyException;
 
 }

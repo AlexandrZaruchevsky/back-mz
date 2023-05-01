@@ -56,6 +56,7 @@ public class NetServiceV1Impl implements NetServiceV1 {
 
     @Scheduled(fixedRate = 5000)
     private synchronized void shutdownExecutors() {
+//        log.info("Task is done");
         services.keySet()
                 .forEach(s -> {
                     if (tasks.get(s).isDone()) {

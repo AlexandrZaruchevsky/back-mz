@@ -1,14 +1,17 @@
 package ru.az.mz.services.utils.xml;
 
+import lombok.ToString;
 import org.springframework.beans.BeanUtils;
 import ru.az.mz.services.utils.SubnetEquip;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @XmlRootElement(name = "subnet-equip")
+@ToString
 public class SubnetEquipXml {
 
     private String hostAddress;
@@ -72,6 +75,7 @@ public class SubnetEquipXml {
     }
 
     @XmlElement(name = "ping-current-time")
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
     public LocalDateTime getPingCurrentTime() {
         return pingCurrentTime;
     }
