@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.az.mz.dto.v1.projections.SubnetMapProjectionV1;
 import ru.az.mz.services.EquipNetServiceV1;
 import ru.az.mz.services.SubnetMapServiceV1;
 
-import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("all/equip-net")
@@ -27,7 +29,7 @@ public class EquipNetRestControllerV1 {
     }
 
     @GetMapping("subnet-list")
-    public ResponseEntity<?> findAllSubnet(
+    public ResponseEntity<List<SubnetMapProjectionV1>> findAllSubnet(
             @RequestParam(defaultValue = "all", required = false) String status
     ) {
         if ("".equalsIgnoreCase(status.trim()) || "all".equalsIgnoreCase(status.trim())) {
@@ -36,6 +38,7 @@ public class EquipNetRestControllerV1 {
             return ResponseEntity.ok(
                     subnetMapServiceV1.findAllByStatus().stream()
                             .filter(subnetMapProjectionV1 -> status.trim().equalsIgnoreCase(subnetMapProjectionV1.getStatus()))
+                            .collect(Collectors.toList())
             );
         }
     }
@@ -44,13 +47,12 @@ public class EquipNetRestControllerV1 {
     public ResponseEntity<?> findAllBySubnetId(
             @RequestParam(defaultValue = "-1", required = false) Long subnet
     ) {
-        if (subnet == -1) {
-            return ResponseEntity
+        return subnet < 0
+                ? ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("incorrect subnet");
-        }
-        return ResponseEntity
-                .ok(equipNetServiceV1.getEquipNetList(subnet));
+                    .body("incorrect subnet")
+                : ResponseEntity
+                    .ok(equipNetServiceV1.getEquipNetList(subnet));
     }
 
 }
