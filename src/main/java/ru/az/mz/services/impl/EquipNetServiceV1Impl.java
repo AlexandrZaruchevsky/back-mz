@@ -54,6 +54,11 @@ public class EquipNetServiceV1Impl implements EquipNetServiceV1 {
     }
 
     @Override
+    public Page<EquipNetDtoProjectionV1> findAll(EntityStatus status, Pageable pageable) {
+        return null;
+    }
+
+    @Override
     public EquipNet add(EquipNetDtoV1 equipNetDtoV1) throws MyException {
         return null;
     }

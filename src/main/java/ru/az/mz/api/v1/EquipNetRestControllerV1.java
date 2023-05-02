@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("all/equip-net")
+@RequestMapping("api/v1/equip-net")
 public class EquipNetRestControllerV1 {
 
     private final EquipNetServiceV1 equipNetServiceV1;
@@ -45,14 +45,14 @@ public class EquipNetRestControllerV1 {
 
     @GetMapping
     public ResponseEntity<?> findAllBySubnetId(
-            @RequestParam(defaultValue = "-1", required = false) Long subnet
+            @RequestParam(defaultValue = "-1", required = false) Long subnetId
     ) {
-        return subnet < 0
+        return subnetId < 0
                 ? ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body("incorrect subnet")
                 : ResponseEntity
-                    .ok(equipNetServiceV1.getEquipNetList(subnet));
+                    .ok(equipNetServiceV1.getEquipNetList(subnetId));
     }
 
 }

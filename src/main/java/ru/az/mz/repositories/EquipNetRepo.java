@@ -1,9 +1,11 @@
 package ru.az.mz.repositories;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import ru.az.mz.dto.v1.projections.EquipNetDtoProjectionV1;
+import ru.az.mz.model.EntityStatus;
 import ru.az.mz.model.EquipNet;
 
 import java.util.List;
@@ -55,6 +57,9 @@ public interface EquipNetRepo extends PagingAndSortingRepository<EquipNet, Long>
             nativeQuery = true
     )
     List<EquipNetDtoProjectionV1> findAllByHostNameAsProjection(Iterable<String> hostNames);
+
+//    Page<EquipNetDtoProjectionV1> findAllByStatusProjection(EntityStatus status, )
+
 
 //    List<EquipNet> f
 
